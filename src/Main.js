@@ -93,7 +93,7 @@ export class Main extends Component {
 					<div className='configButtons border border-1 border-secondary position-relative  bg-light'>
 						<div className='row mb-2'>
 							{/* send configs updates not before object is constructed */}
-							{this.state.yoloCreated && (
+							{this.yoloCreated && (
 								<ConfigurationsPanel
 									setScoreTHR={this.setScoreTHR}
 									setIouTHR={this.setIouTHR}

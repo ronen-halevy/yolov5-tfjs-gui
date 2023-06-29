@@ -5,7 +5,8 @@ class YoloV5 {
 		this.scoreTHR = scoreTHR;
 		this.iouTHR = iouTHR;
 		this.maxBoxes = maxBoxes;
-		this.palette = [
+
+		this.palette = tf.tensor([
 			[0xff, 0x38, 0x38],
 			[0xff, 0x9d, 0x97],
 			[0xff, 0x70, 0x1f],
@@ -26,8 +27,7 @@ class YoloV5 {
 			[0xcb, 0x38, 0xff],
 			[0xff, 0x95, 0xc8],
 			[0xff, 0x37, 0xc7],
-		];
-		this.n = this.palette.length;
+		]);
 	}
 
 	cropMask = (masks, boxes) => {
@@ -103,10 +103,6 @@ class YoloV5 {
 		});
 	};
 
-	getColor = (i) => {
-		const c = this.palette[i % this.n];
-		return [c[0] / 255, c[1] / 255, c[2] / 255];
-	};
 	setScoreTHR = (val) => {
 		this.scoreTHR = val;
 	};
@@ -210,19 +206,12 @@ class YoloV5 {
 			.resizeBilinear(maskPatterns.expandDims(-1), [640, 640])
 			.greater(0.5);
 
-		const selclassIndicesArr = await selclassIndices.array();
-		const colorPalette = selclassIndicesArr.map((selclassIndex) =>
-			this.getColor(selclassIndex)
-		);
+		const ind = selclassIndices.mod(this.palette.shape[0]);
+		const colorPalette = this.palette.gather(tf.cast(ind, 'int32')).div(255);
+		ind.dispose();
 		// ronen - tbd todo add to config param:
 		const alpha = 0.5;
-		const colorPaletteTens = tf.cast(colorPalette, 'float32');
-		maskPatterns = this.masks(
-			maskPatterns,
-			colorPaletteTens,
-			preprocImage,
-			alpha
-		);
+		maskPatterns = this.masks(maskPatterns, colorPalette, preprocImage, alpha);
 
 		const bboxesArray = selBboxes.array();
 		const scoresArray = selScores.array();
@@ -234,7 +223,7 @@ class YoloV5 {
 		selclassIndices.dispose();
 		selMasksCoeffs.dispose();
 		maskPatterns.dispose();
-		colorPaletteTens.dispose();
+		colorPalette.dispose();
 
 		bboxes.dispose(), masksCoeffs.dispose();
 		preprocImage.dispose();

@@ -6,28 +6,26 @@ class YoloV5 {
 		this.iouTHR = iouTHR;
 		this.maxBoxes = maxBoxes;
 		self.palette = [
+			[0xff, 0x38, 0x38],
 			[0xff, 0x9d, 0x97],
 			[0xff, 0x70, 0x1f],
+			[0xff, 0xb2, 0x1d],
+			[0xcf, 0xd2, 0x31],
+			[0x48, 0xf9, 0x0a],
+			[0x92, 0xcc, 0x17],
+			[0x3d, 0xdb, 0x86],
+			[0x1a, 0x93, 0x34],
+			[0x00, 0xd4, 0xbb],
+			[0x2c, 0x99, 0xa8],
+			[0x00, 0xc2, 0xff],
 			[0x34, 0x45, 0x93],
 			[0x64, 0x73, 0xff],
 			[0x00, 0x18, 0xec],
 			[0x84, 0x38, 0xff],
 			[0x52, 0x00, 0x85],
 			[0xcb, 0x38, 0xff],
-			[0x2c, 0x99, 0xa8],
-			[0x00, 0xc2, 0xff],
 			[0xff, 0x95, 0xc8],
 			[0xff, 0x37, 0xc7],
-			[0xff, 0x38, 0x38],
-
-			[0xff, 0xb2, 0x1d],
-			[0xcf, 0xd2, 0x31],
-			[0x48, 0xf9, 0x0a],
-
-			[0x92, 0xcc, 0x17],
-			[0x3d, 0xdb, 0x86],
-			[0x1a, 0x93, 0x34],
-			[0x00, 0xd4, 0xbb],
 		];
 		self.n = self.palette.length;
 	}
@@ -81,7 +79,6 @@ class YoloV5 {
 	masks = (maskPatterns, colors, preprocImage, alpha) => {
 		return tf.tidy(() => {
 			colors = colors.expandDims(-2).expandDims(-2); //shape(n,1,1,3)
-			// colors = tf.cast(colors, 'float32').reshape([-1, 1, 1, 3]); //shape(n,1,1,3)
 			maskPatterns = tf.cast(maskPatterns, 'float32'); // (n,h,w,1)
 
 			const masksColor = maskPatterns.mul(colors.mul(alpha)); // shape(n,h,w,3)
@@ -96,7 +93,7 @@ class YoloV5 {
 				[invAlphMasks.shape[0] - 1, 1],
 				0
 			);
-
+			invAlphMasksHead.dispose();
 			preprocImage = preprocImage
 				.squeeze(0)
 				.mul(invAlphMasksTail.squeeze(0))
@@ -232,7 +229,6 @@ class YoloV5 {
 		const classIndicesArray = selclassIndices.array();
 		const masksResArray = maskPatterns.array();
 
-		// scaledBoxes.dispose();
 		selBboxes.dispose();
 		selScores.dispose();
 		selclassIndices.dispose();
@@ -240,10 +236,7 @@ class YoloV5 {
 		maskPatterns.dispose();
 		colorPaletteTens.dispose();
 
-		bboxes.dispose(),
-			// confidences.dispose(),
-			// classProbs.dispose(),
-			masksCoeffs.dispose();
+		bboxes.dispose(), masksCoeffs.dispose();
 		preprocImage.dispose();
 
 		tf.engine().endScope();

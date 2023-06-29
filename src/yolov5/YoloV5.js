@@ -5,7 +5,7 @@ class YoloV5 {
 		this.scoreTHR = scoreTHR;
 		this.iouTHR = iouTHR;
 		this.maxBoxes = maxBoxes;
-		self.palette = [
+		this.palette = [
 			[0xff, 0x38, 0x38],
 			[0xff, 0x9d, 0x97],
 			[0xff, 0x70, 0x1f],
@@ -27,7 +27,7 @@ class YoloV5 {
 			[0xff, 0x95, 0xc8],
 			[0xff, 0x37, 0xc7],
 		];
-		self.n = self.palette.length;
+		this.n = this.palette.length;
 	}
 
 	cropMask = (masks, boxes) => {
@@ -104,7 +104,7 @@ class YoloV5 {
 	};
 
 	getColor = (i) => {
-		const c = self.palette[i % self.n];
+		const c = this.palette[i % this.n];
 		return [c[0] / 255, c[1] / 255, c[2] / 255];
 	};
 	setScoreTHR = (val) => {

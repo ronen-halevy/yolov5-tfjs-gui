@@ -28,20 +28,20 @@ export class Main extends Component {
 	};
 
 	onLoadModel = (model, classNames) => {
-		// if (!this.yoloCreated) {
-		// note: configNms values are expected to be overrided by config component on init:
-		this.yoloV5 = new YoloV5(
-			model,
-			classNames.length,
-			configNms.scoreTHR,
-			configNms.iouTHR,
-			configNms.maxBoxes
-		);
-		this.yoloCreated = true;
-		// } else {
-		// 	// this.yoloV5.setModelParams(model, classNames.length);
-		// }
-
+		// create object only once. otherwise, just set params
+		if (!this.yoloCreated) {
+			// note: configNms values are expected to be overrided by config component on init:
+			this.yoloV5 = new YoloV5(
+				model,
+				classNames.length,
+				configNms.scoreTHR,
+				configNms.iouTHR,
+				configNms.maxBoxes
+			);
+			this.yoloCreated = true;
+		} else {
+			this.yoloV5.setModelParams(model, classNames.length);
+		}
 		this.setState({ classNames: classNames });
 	};
 
@@ -93,7 +93,7 @@ export class Main extends Component {
 					<div className='configButtons border border-1 border-secondary position-relative  bg-light'>
 						<div className='row mb-2'>
 							{/* send configs updates not before object is constructed */}
-							{this.yoloCreated && (
+							{this.state.yoloCreated && (
 								<ConfigurationsPanel
 									setScoreTHR={this.setScoreTHR}
 									setIouTHR={this.setIouTHR}

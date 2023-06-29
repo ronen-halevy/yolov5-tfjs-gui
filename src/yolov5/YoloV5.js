@@ -159,6 +159,7 @@ class YoloV5 {
 	detectFrame = async (imageFrame) => {
 		// tf.engine cleans intermidiate allocations avoids memory leak - equivalent to tf.tidy
 		tf.engine().startScope();
+		let count1 = tf.memory().numTensors;
 
 		const imageHeight = 640;
 		const imageWidth = 640;
@@ -188,6 +189,8 @@ class YoloV5 {
 		scores.dispose();
 		if (selBboxes.shape[0] == 0) {
 			console.log('null');
+			tf.engine().endScope();
+
 			return null;
 		}
 		var maskPatterns = this.processMask(
@@ -234,6 +237,9 @@ class YoloV5 {
 			masksResArray,
 		]);
 
+		let count2 = tf.memory().numTensors;
+
+		// console.log(count1, count2);
 		return reasultArrays;
 	};
 }

@@ -85,19 +85,30 @@ export default class Render {
 		this.canvas.height = imageHeight;
 
 		// context.drawImage(image, 0, 0, imageWidth, imageHeight);
-		await tf.browser.toPixels(
-			tf.image.resizeBilinear(segmentedImage, [imageHeight, imageWidth]),
-			this.canvas
-		);
-		bboxes.forEach((box, idx) =>
-			this.renderBox(
-				context,
-				box,
-				scores[idx],
-				classNames[classIndices[idx]],
-				imageWidth,
-				imageHeight
-			)
-		);
+		tf.engine().startScope();
+
+		let count1 = tf.memory().numTensors;
+		if ((imageHeight > 0) & (imageWidth > 0)) {
+			const resImage = tf.browser.toPixels(
+				tf.image.resizeBilinear(segmentedImage, [imageHeight, imageWidth]),
+				this.canvas
+			);
+			resImage.then(() => {
+				bboxes.forEach((box, idx) =>
+					this.renderBox(
+						context,
+						box,
+						scores[idx],
+						classNames[classIndices[idx]],
+						imageWidth,
+						imageHeight
+					)
+				);
+			});
+		}
+
+		tf.engine().endScope();
+		let count2 = tf.memory().numTensors;
+		console.log(count1, count2);
 	};
 }

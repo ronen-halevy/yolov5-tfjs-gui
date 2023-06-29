@@ -1,25 +1,3 @@
-const masks = (maskPatterns, colors, preprocImage, alpha) => {
-	var colors = tf.cast(colors, 'float32').reshape([-1, 1, 1, 3]); //shape(n,1,1,3)
-	maskPatterns = tf.cast(maskPatterns, 'float32'); // (n,h,w,1)
-
-	const masksColor = maskPatterns.mul(colors.mul(alpha)); // shape(n,h,w,3)
-	const invAlphMasks = tf.cumprod(tf.scalar(1).sub(maskPatterns.mul(alpha)), 0); // shape(n,h,w,1) where h=w=160
-
-	const mcs = tf.sum(masksColor.mul(invAlphMasks), 0).mul(2); // mask color summand shape(n,h,w,3)
-	const [invAlphMasksHead, invAlphMasksTail] = tf.split(
-		invAlphMasks,
-		[invAlphMasks.shape[0] - 1, 1],
-		0
-	);
-
-	preprocImage = preprocImage
-		.squeeze(0)
-		.mul(invAlphMasksTail.squeeze(0))
-		.add(mcs);
-
-	return preprocImage;
-};
-
 class YoloV5 {
 	constructor(model, nClasses, scoreTHR, iouTHR, maxBoxes) {
 		this.model = model;
@@ -27,7 +5,6 @@ class YoloV5 {
 		this.scoreTHR = scoreTHR;
 		this.iouTHR = iouTHR;
 		this.maxBoxes = maxBoxes;
-		// this.colors = new Colors();
 		self.palette = [
 			[0xff, 0x38, 0x38],
 			[0xff, 0x9d, 0x97],
@@ -98,6 +75,30 @@ class YoloV5 {
 			-1
 		);
 		return this.cropMask(masks, downsampled_bboxes);
+	};
+	masks = (maskPatterns, colors, preprocImage, alpha) => {
+		var colors = tf.cast(colors, 'float32').reshape([-1, 1, 1, 3]); //shape(n,1,1,3)
+		maskPatterns = tf.cast(maskPatterns, 'float32'); // (n,h,w,1)
+
+		const masksColor = maskPatterns.mul(colors.mul(alpha)); // shape(n,h,w,3)
+		const invAlphMasks = tf.cumprod(
+			tf.scalar(1).sub(maskPatterns.mul(alpha)),
+			0
+		); // shape(n,h,w,1) where h=w=160
+
+		const mcs = tf.sum(masksColor.mul(invAlphMasks), 0).mul(2); // mask color summand shape(n,h,w,3)
+		const [invAlphMasksHead, invAlphMasksTail] = tf.split(
+			invAlphMasks,
+			[invAlphMasks.shape[0] - 1, 1],
+			0
+		);
+
+		preprocImage = preprocImage
+			.squeeze(0)
+			.mul(invAlphMasksTail.squeeze(0))
+			.add(mcs);
+
+		return preprocImage;
 	};
 
 	getColor = (i) => {
@@ -193,9 +194,15 @@ class YoloV5 {
 		const colorPalette = selclassIndicesArr.map((selclassIndex) =>
 			this.getColor(selclassIndex)
 		);
+		// ronen - tbd todo add to config param:
 		const alpha = 0.5;
 		const colorPaletteTens = tf.cast(colorPalette, 'float32');
-		maskPatterns = masks(maskPatterns, colorPaletteTens, preprocImage, alpha);
+		maskPatterns = this.masks(
+			maskPatterns,
+			colorPaletteTens,
+			preprocImage,
+			alpha
+		);
 
 		const bboxesArray = selBboxes.array();
 		const scoresArray = selScores.array();

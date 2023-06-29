@@ -121,14 +121,10 @@ class YoloV5 {
 	xywh2xyxy = (x) => {
 		// Convert nx4 boxes from [x, y, w, h] to [x1, y1, x2, y2] where xy1=top-left, xy2=bottom-right
 		return tf.tidy(() => {
-			const axis = -1;
-			var [xc, yc, w, h] = tf.split(x, [1, 1, 1, 1], axis);
-
-			const xmin = xc.sub(w.div(2)); // top left x
-			const ymin = yc.sub(h.div(2)); // top left y
-			const xmax = xc.add(w.div(2)); // bottom right x
-			const ymax = yc.add(h.div(2)); // bottom right y
-			return tf.concat([xmin, ymin, xmax, ymax], axis);
+			var [xy, wh] = tf.split(x, [2, 2], -1);
+			var xymin = xy.sub(wh.div(2));
+			var xymax = xy.add(wh.div(2));
+			return tf.concat([xymin, xymax], -1);
 		});
 	};
 	predict = (preprocImage) => {

@@ -94,8 +94,6 @@ class YoloV5 {
 		self.n = self.palette.length;
 	}
 
-	///////////////////
-
 	cropMask = (masks, boxes) => {
 		const [n, h, w] = masks.shape;
 		const [xmin, ymin, xmax, ymax] = tf.split(
@@ -124,6 +122,7 @@ class YoloV5 {
 		var masks = masksIn.matMul(protosCols).sigmoid().reshape([-1, mh, mw]);
 
 		var downsampled_bboxes = bboxes.clone(); // $.extend({}, bboxes);
+		// downsampled_bboxes = downsampled_bboxes.mul(160);
 
 		var [xmin, ymin, xmax, ymax] = tf.split(
 			downsampled_bboxes,
@@ -206,8 +205,7 @@ class YoloV5 {
 		confidences.dispose();
 		bboxes = this.xywh2xyxy(bboxes);
 
-		// ronen - var only bbox todo
-		var [selBboxes, selScores, selclassIndices, selMasksCoeffs] = await nms(
+		const [selBboxes, selScores, selclassIndices, selMasksCoeffs] = await nms(
 			bboxes,
 			scores,
 			classIndices,
@@ -216,7 +214,10 @@ class YoloV5 {
 			this.scoreTHR,
 			this.maxBoxes
 		);
-
+		if (selBboxes.shape[0] == 0) {
+			console.log('null');
+			return null;
+		}
 		protos = protos.squeeze(0);
 		var maskPatterns = this.processMask(
 			protos,
@@ -235,21 +236,24 @@ class YoloV5 {
 		);
 		const alpha = 0.5;
 		const colorPaletteTens = tf.cast(colorPalette, 'float32');
-		const masksRes = masks(maskPatterns, colorPaletteTens, preprocImage, alpha);
+		maskPatterns = masks(maskPatterns, colorPaletteTens, preprocImage, alpha);
 
 		const bboxesArray = selBboxes.array();
 		const scoresArray = selScores.array();
 		const classIndicesArray = selclassIndices.array();
-		const masksResArray = masksRes.array();
+		const masksResArray = maskPatterns.array();
 
 		// scaledBoxes.dispose();
 		selBboxes.dispose();
 		selScores.dispose();
 		selclassIndices.dispose();
 		selMasksCoeffs.dispose();
-		// masksRes.dispose();
+		maskPatterns.dispose();
+		colorPaletteTens.dispose();
+		// selclassIndicesArr.dispose();
 		tf.engine().endScope();
 
+		// conversion to array is asunc:
 		var reasultArrays = Promise.all([
 			bboxesArray,
 			scoresArray,

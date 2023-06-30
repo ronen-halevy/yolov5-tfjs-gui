@@ -122,9 +122,9 @@ class YoloV5 {
 		// Convert nx4 boxes from [x, y, w, h] to [x1, y1, x2, y2] where xy1=top-left, xy2=bottom-right
 		return tf.tidy(() => {
 			var [xy, wh] = tf.split(x, [2, 2], -1);
-			var xymin = xy.sub(wh.div(2));
-			var xymax = xy.add(wh.div(2));
-			return tf.concat([xymin, xymax], -1);
+			var xyMin = xy.sub(wh.div(2));
+			var xyMax = xy.add(wh.div(2));
+			return tf.concat([xyMin, xyMax], -1);
 		});
 	};
 	predict = (preprocImage) => {
@@ -154,6 +154,36 @@ class YoloV5 {
 			confidences.dispose();
 			return [protos, bboxes, classIndices, scores, masksCoeffs];
 		});
+	};
+	procMasks = (
+		preprocImage,
+		protos,
+		selMasksCoeffs,
+		selBboxes,
+		selclassIndices,
+		modelWidth,
+		modelHeight
+	) => {
+		var maskPatterns = this.processMask(
+			protos.squeeze(0),
+			selMasksCoeffs,
+			selBboxes,
+			modelWidth,
+			modelHeight
+		);
+		maskPatterns = tf.image
+			.resizeBilinear(maskPatterns.expandDims(-1), [640, 640])
+			.greater(0.5);
+
+		const ind = selclassIndices.mod(this.palette.shape[0]);
+		const colorPalette = this.palette.gather(tf.cast(ind, 'int32')).div(255);
+		ind.dispose();
+		// ronen - tbd todo add to config param:
+		const alpha = 0.5;
+		maskPatterns = this.masks(maskPatterns, colorPalette, preprocImage, alpha);
+		colorPalette.dispose();
+
+		return maskPatterns;
 	};
 
 	detectFrame = async (imageFrame) => {
@@ -192,39 +222,22 @@ class YoloV5 {
 
 			return null;
 		}
-		var maskPatterns = this.processMask(
-			protos.squeeze(0),
+
+		const maskPatterns = this.procMasks(
+			preprocImage,
+			protos,
 			selMasksCoeffs,
 			selBboxes,
+			selclassIndices,
 			imageFrame.width,
 			imageFrame.height
 		);
 		protos.dispose();
-		maskPatterns = tf.image
-			.resizeBilinear(maskPatterns.expandDims(-1), [640, 640])
-			.greater(0.5);
-
-		const ind = selclassIndices.mod(this.palette.shape[0]);
-		const colorPalette = this.palette.gather(tf.cast(ind, 'int32')).div(255);
-		ind.dispose();
-		// ronen - tbd todo add to config param:
-		const alpha = 0.5;
-		maskPatterns = this.masks(maskPatterns, colorPalette, preprocImage, alpha);
 
 		const bboxesArray = selBboxes.array();
 		const scoresArray = selScores.array();
 		const classIndicesArray = selclassIndices.array();
 		const masksResArray = maskPatterns.array();
-
-		selBboxes.dispose();
-		selScores.dispose();
-		selclassIndices.dispose();
-		selMasksCoeffs.dispose();
-		maskPatterns.dispose();
-		colorPalette.dispose();
-
-		bboxes.dispose(), masksCoeffs.dispose();
-		preprocImage.dispose();
 
 		tf.engine().endScope();
 

@@ -1,34 +1,26 @@
-class YoloV5 {
-	constructor(model, nClasses, scoreTHR, iouTHR, maxBoxes) {
-		this.model = model;
-		this.nClasses = nClasses;
-		this.scoreTHR = scoreTHR;
-		this.iouTHR = iouTHR;
-		this.maxBoxes = maxBoxes;
-
-		this.palette = tf.tensor([
-			[0xff, 0x38, 0x38],
-			[0xff, 0x9d, 0x97],
-			[0xff, 0x70, 0x1f],
-			[0xff, 0xb2, 0x1d],
-			[0xcf, 0xd2, 0x31],
-			[0x48, 0xf9, 0x0a],
-			[0x92, 0xcc, 0x17],
-			[0x3d, 0xdb, 0x86],
-			[0x1a, 0x93, 0x34],
-			[0x00, 0xd4, 0xbb],
-			[0x2c, 0x99, 0xa8],
-			[0x00, 0xc2, 0xff],
-			[0x34, 0x45, 0x93],
-			[0x64, 0x73, 0xff],
-			[0x00, 0x18, 0xec],
-			[0x84, 0x38, 0xff],
-			[0x52, 0x00, 0x85],
-			[0xcb, 0x38, 0xff],
-			[0xff, 0x95, 0xc8],
-			[0xff, 0x37, 0xc7],
-		]);
-	}
+class ProcMasks {
+	palette = tf.tensor([
+		[0xff, 0x38, 0x38],
+		[0xff, 0x9d, 0x97],
+		[0xff, 0x70, 0x1f],
+		[0xff, 0xb2, 0x1d],
+		[0xcf, 0xd2, 0x31],
+		[0x48, 0xf9, 0x0a],
+		[0x92, 0xcc, 0x17],
+		[0x3d, 0xdb, 0x86],
+		[0x1a, 0x93, 0x34],
+		[0x00, 0xd4, 0xbb],
+		[0x2c, 0x99, 0xa8],
+		[0x00, 0xc2, 0xff],
+		[0x34, 0x45, 0x93],
+		[0x64, 0x73, 0xff],
+		[0x00, 0x18, 0xec],
+		[0x84, 0x38, 0xff],
+		[0x52, 0x00, 0x85],
+		[0xcb, 0x38, 0xff],
+		[0xff, 0x95, 0xc8],
+		[0xff, 0x37, 0xc7],
+	]);
 
 	cropMask = (masks, boxes) => {
 		const [n, h, w] = masks.shape;
@@ -103,6 +95,58 @@ class YoloV5 {
 		});
 	};
 
+	run = (
+		preprocImage,
+		protos,
+		selMasksCoeffs,
+		selBboxes,
+		selclassIndices,
+		modelWidth,
+		modelHeight
+	) => {
+		return tf.tidy(() => {
+			var maskPatterns = this.processMask(
+				protos.squeeze(0),
+				selMasksCoeffs,
+				selBboxes,
+				modelWidth,
+				modelHeight
+			);
+			protos.dispose();
+			selMasksCoeffs.dispose();
+
+			maskPatterns = tf.image
+				.resizeBilinear(maskPatterns.expandDims(-1), [640, 640])
+				.greater(0.5);
+
+			const ind = selclassIndices.mod(this.palette.shape[0]);
+			const colorPalette = this.palette.gather(tf.cast(ind, 'int32')).div(255);
+			ind.dispose();
+			// ronen - tbd todo add to config param:
+			const alpha = 0.5;
+			maskPatterns = this.masks(
+				maskPatterns,
+				colorPalette,
+				preprocImage,
+				alpha
+			);
+			colorPalette.dispose();
+
+			return maskPatterns;
+		});
+	};
+}
+
+class YoloV5 {
+	constructor(model, nClasses, scoreTHR, iouTHR, maxBoxes) {
+		this.model = model;
+		this.nClasses = nClasses;
+		this.scoreTHR = scoreTHR;
+		this.iouTHR = iouTHR;
+		this.maxBoxes = maxBoxes;
+		this.procMasks = new ProcMasks();
+	}
+
 	setScoreTHR = (val) => {
 		this.scoreTHR = val;
 	};
@@ -155,36 +199,6 @@ class YoloV5 {
 			return [protos, bboxes, classIndices, scores, masksCoeffs];
 		});
 	};
-	procMasks = (
-		preprocImage,
-		protos,
-		selMasksCoeffs,
-		selBboxes,
-		selclassIndices,
-		modelWidth,
-		modelHeight
-	) => {
-		var maskPatterns = this.processMask(
-			protos.squeeze(0),
-			selMasksCoeffs,
-			selBboxes,
-			modelWidth,
-			modelHeight
-		);
-		maskPatterns = tf.image
-			.resizeBilinear(maskPatterns.expandDims(-1), [640, 640])
-			.greater(0.5);
-
-		const ind = selclassIndices.mod(this.palette.shape[0]);
-		const colorPalette = this.palette.gather(tf.cast(ind, 'int32')).div(255);
-		ind.dispose();
-		// ronen - tbd todo add to config param:
-		const alpha = 0.5;
-		maskPatterns = this.masks(maskPatterns, colorPalette, preprocImage, alpha);
-		colorPalette.dispose();
-
-		return maskPatterns;
-	};
 
 	detectFrame = async (imageFrame) => {
 		// tf.engine cleans intermidiate allocations avoids memory leak - equivalent to tf.tidy
@@ -223,7 +237,7 @@ class YoloV5 {
 			return null;
 		}
 
-		const maskPatterns = this.procMasks(
+		const maskPatterns = this.procMasks.run(
 			preprocImage,
 			protos,
 			selMasksCoeffs,
@@ -232,7 +246,6 @@ class YoloV5 {
 			imageFrame.width,
 			imageFrame.height
 		);
-		protos.dispose();
 
 		const bboxesArray = selBboxes.array();
 		const scoresArray = selScores.array();

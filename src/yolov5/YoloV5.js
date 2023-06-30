@@ -53,6 +53,7 @@ class ProcMasks {
 		const protosCols = protos.reshape([ch, -1]);
 		const masks = masksIn.matMul(protosCols).sigmoid().reshape([-1, mh, mw]);
 
+		// resize boxes to masks' dimr i.r. 160*160 (modelSize/4):
 		const downsampledBboxes = bboxes.mul([
 			masks.shape[1],
 			masks.shape[2],
@@ -89,15 +90,7 @@ class ProcMasks {
 		});
 	};
 
-	run = (
-		preprocImage,
-		protos,
-		selMasksCoeffs,
-		selBboxes,
-		selclassIndices,
-		modelWidth,
-		modelHeight
-	) => {
+	run = (preprocImage, protos, selMasksCoeffs, selBboxes, selclassIndices) => {
 		return tf.tidy(() => {
 			var maskPatterns = this.processMask(
 				protos.squeeze(0),
@@ -234,9 +227,7 @@ class YoloV5 {
 			protos,
 			selMasksCoeffs,
 			selBboxes,
-			selclassIndices,
-			imageFrame.width,
-			imageFrame.height
+			selclassIndices
 		);
 
 		const bboxesArray = selBboxes.array();

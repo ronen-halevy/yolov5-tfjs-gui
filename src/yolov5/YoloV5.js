@@ -44,29 +44,23 @@ class ProcMasks {
 		return masks.mul(crop); // ((r >= x1) * (r < x2) * (c >= y1) * (c < y2))
 	};
 
-	processMask = (protos, masksIn, bboxes, ih, iw) => {
+	// input:
+	// protos: 32, 160, 160
+	// masksIn: n, 32
+	// bboxes: n,4
+	processMask = (protos, masksIn, bboxes) => {
 		var [ch, mh, mw] = protos.shape;
 		const protosCols = protos.reshape([ch, -1]);
-		var masks = masksIn.matMul(protosCols).sigmoid().reshape([-1, mh, mw]);
+		const masks = masksIn.matMul(protosCols).sigmoid().reshape([-1, mh, mw]);
 
-		var downsampled_bboxes = bboxes.clone(); // $.extend({}, bboxes);
-		// downsampled_bboxes = downsampled_bboxes.mul(160);
+		const downsampledBboxes = bboxes.mul([
+			masks.shape[1],
+			masks.shape[2],
+			masks.shape[1],
+			masks.shape[2],
+		]);
 
-		var [xmin, ymin, xmax, ymax] = tf.split(
-			downsampled_bboxes,
-			[1, 1, 1, 1],
-			-1
-		);
-		downsampled_bboxes = tf.concat(
-			[
-				xmin.mul(masks.shape[1]),
-				ymin.mul(masks.shape[2]),
-				xmax.mul(masks.shape[1]),
-				ymax.mul(masks.shape[2]),
-			],
-			-1
-		);
-		return this.cropMask(masks, downsampled_bboxes);
+		return this.cropMask(masks, downsampledBboxes);
 	};
 	masks = (maskPatterns, colors, preprocImage, alpha) => {
 		return tf.tidy(() => {
@@ -108,9 +102,7 @@ class ProcMasks {
 			var maskPatterns = this.processMask(
 				protos.squeeze(0),
 				selMasksCoeffs,
-				selBboxes,
-				modelWidth,
-				modelHeight
+				selBboxes
 			);
 			protos.dispose();
 			selMasksCoeffs.dispose();

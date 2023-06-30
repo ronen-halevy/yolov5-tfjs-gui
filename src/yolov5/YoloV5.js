@@ -22,77 +22,101 @@ class ProcMasks {
 		[0xff, 0x37, 0xc7],
 	]);
 
-	cropMask = (masks, boxes) => {
-		const [n, h, w] = masks.shape;
-		const [xmin, ymin, xmax, ymax] = tf.split(
-			boxes.expandDims([1]),
-			[1, 1, 1, 1],
-			-1
-		);
+	/// crop out masks which are not bbox bounded. (note: )
+	// inputs:
+	// masks: dim [n,160,160],  True for max pixels False otherwise
+	// boxes: dim [n, 4]
+	cropMask = (masks, bboxes) => {
+		return tf.tidy(() => {
+			const [n, h, w] = masks.shape;
 
-		const r = tf.range(0, w, 1, xmin.dtype).expandDims(0).expandDims(0); // array [0.....,w-1] dim: [1,1,w]
-		const c = tf.range(0, h, 1, xmin.dtype).expandDims(-1).expandDims(0); // array [0.....,h-1] dim: [1,h,1]
+			// resize boxes to masks' dims i.e. 160*160 (modelSize/4):
+			const downsampledBboxes = bboxes.mul([
+				masks.shape[1],
+				masks.shape[2],
+				masks.shape[1],
+				masks.shape[2],
+			]);
 
-		// crop is masks pixels which are not inside a bbox.
+			const [xmin, ymin, xmax, ymax] = tf.split(
+				downsampledBboxes.expandDims([1]),
+				[1, 1, 1, 1],
+				-1
+			);
 
-		const crop = r
-			.greaterEqual(xmin)
-			.mul(r.lessEqual(xmax))
-			.mul(c.greaterEqual(ymin))
-			.mul(c.lessEqual(ymax));
+			const r = tf.range(0, w, 1, xmin.dtype).expandDims(0).expandDims(0); // array [0.....,w-1] dim: [1,1,w]
+			const c = tf.range(0, h, 1, xmin.dtype).expandDims(-1).expandDims(0); // array [0.....,h-1] dim: [1,h,1]
 
-		return masks.mul(crop); // ((r >= x1) * (r < x2) * (c >= y1) * (c < y2))
+			// crop is True for masks pixels which are not inside a bbox.
+			const crop = r
+				.greaterEqual(xmin)
+				.mul(r.lessEqual(xmax))
+				.mul(c.greaterEqual(ymin))
+				.mul(c.lessEqual(ymax));
+
+			return masks.mul(crop); // ((r >= x1) * (r < x2) * (c >= y1) * (c < y2))
+		});
 	};
 
 	// input:
 	// protos: 32, 160, 160
 	// masksIn: n, 32
 	// bboxes: n,4
-	processMask = (protos, masksIn, bboxes) => {
+	composeMasks = (protos, masksIn, bboxes) => {
 		var [ch, mh, mw] = protos.shape;
 		const protosCols = protos.reshape([ch, -1]);
 		const masks = masksIn.matMul(protosCols).sigmoid().reshape([-1, mh, mw]);
 
-		// resize boxes to masks' dimr i.r. 160*160 (modelSize/4):
-		const downsampledBboxes = bboxes.mul([
-			masks.shape[1],
-			masks.shape[2],
-			masks.shape[1],
-			masks.shape[2],
-		]);
-
-		return this.cropMask(masks, downsampledBboxes);
+		return this.cropMask(masks, bboxes);
 	};
-	masks = (maskPatterns, colors, preprocImage, alpha) => {
+
+	// Composes an image with a mask overlay. The input image
+	//inputs:
+	// maskPatterns: a mask per detection, mask bits are True, type: bool  dim [n, h,w,1]
+	// colors:  RGB bytes color per each detection type: range: [0,1] (pixels herer are floats),  float32 dim [n,3]
+	// preprocImage: Input image, resized to model's dims
+	// alpha: mask opacity float, scalar range [0.5,1].
+	composeImage = (maskPatterns, colors, preprocImage, alpha) => {
 		return tf.tidy(() => {
 			colors = colors.expandDims(-2).expandDims(-2); //shape(n,1,1,3)
 			maskPatterns = tf.cast(maskPatterns, 'float32'); // (n,h,w,1)
 
-			const masksColor = maskPatterns.mul(colors.mul(alpha)); // shape(n,h,w,3)
+			const coloredMasks = maskPatterns.mul(colors.mul(alpha)); // shape(n,h,w,3)
+			// invAlphMasks=cumprod(1-maskPatterns*alpha), where:
+			//cumprod:  cumulative product of (1-maskPatterns*alpah), i.e.:
+			// [(1-maskPatterns[0]*alpah), (1-maskPatterns[0]*alpah)(1-maskPatterns[1]*alpah)....(1-maskPatterns*alpah[0])*..*(1-maskPatterns*alpah[n])]
+			// So in the nth element, invAlphMasks[n,i,j,1] is (1-alpha)^m, where m is the mumber of overlapping detections on this pixel.
+
+			// invAlphMasks<0.5 if alpha>0.5. This confirms image+mask < 0.5
 			const invAlphMasks = tf.cumprod(
 				tf.scalar(1).sub(maskPatterns.mul(alpha)),
 				0
 			); // shape(n,h,w,1) where h=w=160
 
-			const mcs = tf.sum(masksColor.mul(invAlphMasks), 0).mul(2); // mask color summand shape(n,h,w,3)
+			// the colored masks are multiplied by invAlphMasks. Larger invAlphMasks is less opacity.
+			// mul(2) brightens mask. mcs*2 < 0.5 as coloredMasks<0.5 and invAlphMasks<0.5^m, where m is num of detections on pixel
+			const mcs = tf.sum(coloredMasks.mul(invAlphMasks), 0).mul(2); // mask color summand shape(n,h,w,3)
+
 			const [invAlphMasksHead, invAlphMasksTail] = tf.split(
 				invAlphMasks,
 				[invAlphMasks.shape[0] - 1, 1],
 				0
 			);
 			invAlphMasksHead.dispose();
-			preprocImage = preprocImage
+			// preprocImage*invAlphMasksTail+: mcs (mask color summand)
+			// Mul preprocImage by invAlphMasksTail confirms value <0., otherwise the sum might exceed 1.0
+			const composedMaskedImage = preprocImage
 				.squeeze(0)
 				.mul(invAlphMasksTail.squeeze(0))
 				.add(mcs);
 
-			return preprocImage;
+			return composedMaskedImage;
 		});
 	};
 
 	run = (preprocImage, protos, selMasksCoeffs, selBboxes, selclassIndices) => {
 		return tf.tidy(() => {
-			var maskPatterns = this.processMask(
+			var maskPatterns = this.composeMasks(
 				protos.squeeze(0),
 				selMasksCoeffs,
 				selBboxes
@@ -109,7 +133,7 @@ class ProcMasks {
 			ind.dispose();
 			// ronen - tbd todo add to config param:
 			const alpha = 0.5;
-			maskPatterns = this.masks(
+			const composedMaskedImage = this.composeImage(
 				maskPatterns,
 				colorPalette,
 				preprocImage,
@@ -117,7 +141,7 @@ class ProcMasks {
 			);
 			colorPalette.dispose();
 
-			return maskPatterns;
+			return composedMaskedImage;
 		});
 	};
 }
@@ -222,7 +246,7 @@ class YoloV5 {
 			return null;
 		}
 
-		const maskPatterns = this.procMasks.run(
+		const composedMaskedImage = this.procMasks.run(
 			preprocImage,
 			protos,
 			selMasksCoeffs,
@@ -233,7 +257,7 @@ class YoloV5 {
 		const bboxesArray = selBboxes.array();
 		const scoresArray = selScores.array();
 		const classIndicesArray = selclassIndices.array();
-		const masksResArray = maskPatterns.array();
+		const masksResArray = composedMaskedImage.array();
 
 		tf.engine().endScope();
 

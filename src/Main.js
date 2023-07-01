@@ -8,7 +8,7 @@ import { VideoControlPanel } from './components/VideoControlPanel';
 import configNms from './config/configNms.json';
 
 // import cdn module:
-import { YoloV5 } from './yolov5/YoloV5.js';
+// import { YoloV5 } from './yolov5/YoloV5.js';
 
 import Render from './utils/Render.js';
 export class Main extends Component {

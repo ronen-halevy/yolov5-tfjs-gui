@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import Render from '../utils/Render.js';
+import { Render } from '../utils/Render.js';
+import configRender from '../config/configRender.json';
 
 export class VideoControlPanel extends Component {
 	constructor(props) {
@@ -17,10 +18,23 @@ export class VideoControlPanel extends Component {
 			fps: 0,
 		};
 		this.canvasRefVideo = React.createRef();
+		// // init renderer:
+		this.font = configRender.font;
+		this.lineWidth = configRender.lineWidth;
+		this.lineColor = configRender.lineColor;
+		this.textColor = configRender.textColor;
+		this.textBackgoundColor = configRender.textBackgoundColor;
 	}
 
 	componentDidMount() {
-		this.draw = new Render(this.canvasRefVideo.current);
+		this.draw = new Render(
+			this.canvasRefVideo.current,
+			this.lineWidth,
+			this.lineColor,
+			this.font,
+			this.textColor,
+			this.textBackgoundColor
+		);
 	}
 
 	// elements callbacks:
@@ -96,7 +110,6 @@ export class VideoControlPanel extends Component {
 		var imageWidth =
 			(isVideoFrame ? frame.videoWidth : frame.width) * this.state.scale;
 		this.draw.renderOnImage(
-			frame,
 			resMasks,
 			selBboxes,
 			scores,

@@ -1,16 +1,21 @@
-import config from '../config/configRender.json';
-
 /**
  * Contains methods to render bounding boxes and text annotations on an image's (same as a single frame) detection.
  */
-export default class Render {
-	constructor(canvas) {
+class Render {
+	constructor(
+		canvas,
+		lineWidth,
+		lineColor,
+		font,
+		textColor,
+		textBackgoundColor
+	) {
 		this.canvas = canvas;
-		this.font = config.font;
-		this.lineWidth = config.lineWidth;
-		this.lineColor = config.lineColor;
-		this.textColor = config.textColor;
-		this.textBackgoundColor = config.textBackgoundColor;
+		this.font = font;
+		this.lineWidth = lineWidth;
+		this.lineColor = lineColor;
+		this.textColor = textColor;
+		this.textBackgoundColor = textBackgoundColor;
 	}
 	/**
 	 * @summary renders a bounding box and text annotations for a detection
@@ -69,8 +74,7 @@ export default class Render {
 	 * @param {Array<float>} classIndices - An array with a class index per a detectiono.
 	 */
 
-	renderOnImage = async (
-		image,
+	renderOnImage = (
 		segmentedImage,
 		bboxes,
 		scores,
@@ -109,6 +113,7 @@ export default class Render {
 
 		tf.engine().endScope();
 		let count2 = tf.memory().numTensors;
-		console.log(count1, count2);
+		console.log('numTensors ', count1);
 	};
 }
+export { Render };

@@ -1,6 +1,6 @@
 {
 	"models": {
-		"YoloV3Tiny": {
+		"YoloV5s": {
 			"coco": {
 				"modelUrl": "https://raw.githubusercontent.com/ronen-halevy/yolov5-tfjs-gui/master/models/coco-tiny/model.json",
 				"classNamesUrl": "https://raw.githubusercontent.com/ronen-halevy/yolov3-tfjs-gui/master/data/cocoClassNames.txt"

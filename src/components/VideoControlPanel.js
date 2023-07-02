@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-// import { Render } from '../utils/Render.js';
+import { Render } from '../utils/Render.js';
 import configRender from '../config/configRender.json';
 
 export class VideoControlPanel extends Component {
@@ -13,6 +13,7 @@ export class VideoControlPanel extends Component {
 		this.state = {
 			scale: 0.25,
 			videoRate: 1,
+			displayMode: 'composed', // or 'masks'
 			currentTime: 0,
 			duration: 0,
 			fps: 0,
@@ -64,6 +65,10 @@ export class VideoControlPanel extends Component {
 		this.setState({ videoRate: newRate });
 		this.vfbfStreamer.setPlaybackRate(newRate);
 	};
+	onClickDisplayMode = () => {
+		const newMode = this.state.displayMode == 'composed' ? 'masks' : 'composed';
+		this.setState({ displayMode: newMode });
+	};
 
 	// vfbf
 	findFps() {
@@ -104,13 +109,15 @@ export class VideoControlPanel extends Component {
 		if (typeof detectResults == 'undefined') {
 			return;
 		}
-		let [selBboxes, scores, classIndices, resMasks] = detectResults;
+		let [selBboxes, scores, classIndices, composedImage, masks] = detectResults;
 		var imageHeight =
 			(isVideoFrame ? frame.videoHeight : frame.height) * this.state.scale;
 		var imageWidth =
 			(isVideoFrame ? frame.videoWidth : frame.width) * this.state.scale;
+		// const image =
+		const image = this.state.displayMode == 'composed' ? composedImage : masks;
 		this.draw.renderOnImage(
-			resMasks,
+			image,
 			selBboxes,
 			scores,
 			classIndices,
@@ -131,7 +138,21 @@ export class VideoControlPanel extends Component {
 					<div className='row'>
 						{/* Speed button */}
 
-						<div className='col-4 text-center'>
+						<div className='col-3 text-center'>
+							{' '}
+							<span
+								className='badge text-bg-dark  position-relative'
+								onClick={this.onClickDisplayMode}
+							>
+								{' '}
+								Mode
+								<span className='position-absolute top-0 start-50 translate-middle badge rounded-pill bg-danger '>
+									{this.state.displayMode}
+								</span>
+							</span>
+						</div>
+
+						<div className='col-3 text-center'>
 							{' '}
 							<span
 								className='badge text-bg-dark  position-relative'
@@ -146,7 +167,7 @@ export class VideoControlPanel extends Component {
 						</div>
 						{/* fps display */}
 
-						<div className='col-4 text-center'>
+						<div className='col-3 text-center'>
 							{' '}
 							<span className='badge text-bg-light border border-dark   position-relative'>
 								<span className=' '>fps: {this.state.fps}</span>
@@ -154,7 +175,7 @@ export class VideoControlPanel extends Component {
 						</div>
 						{/* time display */}
 
-						<div className='col-4 text-center'>
+						<div className='col-3 text-center'>
 							<span className='badge text-bg-light border border-dark position-relative'>
 								<span className='text-center'>
 									{this.state.currentTime}/{this.state.duration}

@@ -65,6 +65,15 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/m
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
 
+#########################################3
+
+### Model Conversion to JS
+
+Ref:
+https://www.tensorflow.org/js/guide/conversion
+
+tensorflowjs_converter --input_format=keras /tmp/model /tmp/tfjs_model
+
 ### CDN modules
 
 ### Deployment

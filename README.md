@@ -1,5 +1,7 @@
 ## Note - This repo is still WIP till v1.0 is published (soon)
-## 
+
+##
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
@@ -63,10 +65,32 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/m
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
 
+### CDN modules
+
 ### Deployment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+The React application is deployed to gh-pages. This section describes the steps required for the deployment:
+(Ref: https://github.com/gitname/react-gh-pages)
 
-### `npm run build` fails to minify
+1. Install the gh-pages npm package and designate it as a development dependency:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+$ npm install gh-pages --save-dev
+
+2. Add a homepage property https://{username}.github.io/{repo-name} to package.json
+
+3.Add a predeploy property and a deploy property to the scripts object of `package.json`:
+
+"scripts": {
+
+- "predeploy": "npm run build",
+- "deploy": "gh-pages -d build",
+  "start": "react-scripts start",
+  "build": "react-scripts build",
+
+4. Add a "remote" to the local Git repository.
+
+git remote add origin https://github.com/{username}/{repo-name}.git
+
+5. Push the React app to the GitHub repository
+
+$ npm run deploy

@@ -34,14 +34,14 @@ export default class ModelSelectionPanel extends Component {
 		this.selectedWeights = selectedWeights;
 	};
 
-	onLoadModel = () => {
+	onLoadModel = async () => {
 		this.setState({ loadingMessage: 'Loading Model...', loadSpinner: true });
 
 		const modelConfig =
 			this.modelsTable[this.selectedModel][this.selectedWeights];
 		const { modelUrl, classNamesUrl, ...rest } = modelConfig;
 
-		createModel(modelUrl, classNamesUrl).then((res) => {
+		await createModel(modelUrl, classNamesUrl).then((res) => {
 			this.setState({
 				loadedModel: this.selectedModel,
 				loadedWeights: this.selectedWeights,

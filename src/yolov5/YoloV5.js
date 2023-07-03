@@ -312,8 +312,23 @@ const nms = (
 	return nmsPromise;
 };
 
-const createModel = (modelUrl, classNamesUrl) => {
-	const modelPromise = tf.loadGraphModel(modelUrl);
+const createModel = async (modelUrl, classNamesUrl) => {
+	const uurl = '${window.location.href}/models/yolov5n/model.json';
+	console.log(uurl);
+
+	const yolov5 = await tf.loadGraphModel(
+		uurl
+		// ,{
+		// onProgress: (fractions) => {
+		// 	setLoading({ loading: true, progress: fractions }); // set loading fractions
+		// },
+		// }
+	); // load model
+
+	const modelPromise = tf.loadGraphModel(uurl);
+
+	// const modelPromise = tf.loadGraphModel(modelUrl);
+
 	const classNamesPromise = fetch(classNamesUrl).then((x) => x.text());
 
 	const promise = Promise.all([modelPromise, classNamesPromise]);

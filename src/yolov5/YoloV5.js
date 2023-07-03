@@ -313,7 +313,7 @@ const nms = (
 };
 
 const createModel = async (modelUrl, classNamesUrl) => {
-	const uurl = '${window.location.href}/models/yolov5n/model.json';
+	const uurl = `${window.location.href}/models/yolov5n/model.json`;
 	console.log(uurl);
 
 	const yolov5 = await tf.loadGraphModel(

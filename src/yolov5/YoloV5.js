@@ -313,9 +313,9 @@ const nms = (
 };
 
 const createModel = (modelUrl, classNamesUrl) => {
-	// in case of local url, assume port's place holder was xxxx
-	if (modelUrl.includes('xxxx')) {
-		modelUrl = modelUrl.replace('xxxx', `${window.location.port}`);
+	// in case of local url, eval to have the back ticked (`) address:
+	if (modelUrl.includes('window.location.href')) {
+		modelUrl = eval(modelUrl);
 	}
 
 	const modelPromise = tf.loadGraphModel(modelUrl);

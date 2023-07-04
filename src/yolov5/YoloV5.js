@@ -312,22 +312,13 @@ const nms = (
 	return nmsPromise;
 };
 
-const createModel = async (modelUrl, classNamesUrl) => {
-	const uurl = `${window.location.href}/models/yolov5n/model.json`;
-	console.log(uurl);
+const createModel = (modelUrl, classNamesUrl) => {
+	// in case of local url, assume port's place holder was xxxx
+	if (modelUrl.includes('xxxx')) {
+		modelUrl = modelUrl.replace('xxxx', `${window.location.port}`);
+	}
 
-	const yolov5 = await tf.loadGraphModel(
-		uurl
-		// ,{
-		// onProgress: (fractions) => {
-		// 	setLoading({ loading: true, progress: fractions }); // set loading fractions
-		// },
-		// }
-	); // load model
-
-	const modelPromise = tf.loadGraphModel(uurl);
-
-	// const modelPromise = tf.loadGraphModel(modelUrl);
+	const modelPromise = tf.loadGraphModel(modelUrl);
 
 	const classNamesPromise = fetch(classNamesUrl).then((x) => x.text());
 

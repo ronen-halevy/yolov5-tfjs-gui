@@ -11,43 +11,39 @@ export default class ModelSelectionPanel extends Component {
 
 		this.state = {
 			loadedModel: '',
-			loadedWeights: '',
 			loadingMessage: 'No Model Loaded!',
 			loadSpinner: false,
 		};
 		this.modelsTable = configModel.models;
 		// take first in list as a default:
 		this.selectedModel = Object.keys(this.modelsTable)[0];
-		this.selectedWeights = Object.keys(this.modelsTable[this.selectedModel])[0];
+		// this.selectedWeights = Object.keys(this.modelsTable[this.selectedModel])[0];
 	}
 
 	componentDidMount() {
 		this.onLoadModel();
 	}
 
-	setModelAndWeights = (results) => {
-		const { selectedModel, selectedWeights } = results;
+	setModel = (results) => {
+		const { selectedModel } = results;
 		// this.setState({
-		console.log(this.selectedModel, this.selectedWeights);
+		console.log(this.selectedModel);
 
 		this.selectedModel = selectedModel;
-		this.selectedWeights = selectedWeights;
+		// this.selectedWeights = selectedWeights;
 	};
 
 	onLoadModel = async () => {
 		this.setState({ loadingMessage: 'Loading Model...', loadSpinner: true });
 
-		const modelConfig =
-			this.modelsTable[this.selectedModel][this.selectedWeights];
+		const modelConfig = this.modelsTable[this.selectedModel];
 		const { modelUrl, classNamesUrl, ...rest } = modelConfig;
 
 		await createModel(modelUrl, classNamesUrl).then((res) => {
 			this.setState({
 				loadedModel: this.selectedModel,
-				loadedWeights: this.selectedWeights,
 
-				loadingMessage:
-					this.selectedModel + ' + ' + this.selectedWeights + ' is ready!',
+				loadingMessage: this.selectedModel + ' is ready!',
 				loadSpinner: false,
 			});
 			this.model = res[0];
@@ -79,7 +75,7 @@ export default class ModelSelectionPanel extends Component {
 					</div>
 					<SelectModelButtons
 						modelsTable={this.modelsTable}
-						setModelAndWeights={this.setModelAndWeights}
+						setModel={this.setModel}
 					/>
 				</div>
 			</div>

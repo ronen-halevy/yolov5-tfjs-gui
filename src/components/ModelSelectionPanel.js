@@ -17,7 +17,6 @@ export default class ModelSelectionPanel extends Component {
 		this.modelsTable = configModel.models;
 		// take first in list as a default:
 		this.selectedModel = Object.keys(this.modelsTable)[0];
-		// this.selectedWeights = Object.keys(this.modelsTable[this.selectedModel])[0];
 	}
 
 	componentDidMount() {
@@ -30,7 +29,6 @@ export default class ModelSelectionPanel extends Component {
 		console.log(this.selectedModel);
 
 		this.selectedModel = selectedModel;
-		// this.selectedWeights = selectedWeights;
 	};
 
 	onLoadModel = async () => {
@@ -56,7 +54,7 @@ export default class ModelSelectionPanel extends Component {
 	render() {
 		return (
 			<div>
-				<div className='selectModelAndDataset row mt-2'>
+				<div className='selectModel row mt-2'>
 					<div className='col-4  text-center '>
 						<span
 							className='btn btn-dark btn-lg  position-relative badge start-0'
@@ -64,7 +62,7 @@ export default class ModelSelectionPanel extends Component {
 						>
 							Load
 							<span className='position-absolute top-0  start-50 translate-middle badge rounded-pill bg-danger'>
-								{this.state.loadedModel}+{this.state.loadedWeights}
+								{this.state.loadedModel}
 							</span>
 							{this.state.loadSpinner && (
 								<div className='spinner-border' role='status'>

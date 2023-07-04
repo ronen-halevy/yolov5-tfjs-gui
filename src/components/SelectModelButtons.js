@@ -40,7 +40,7 @@ export default class SelectModelButtons extends Component {
 						className='btn btn-dark btn-lg  position-relative badge start-0'
 						onClick={this.onClickedSelectModel}
 					>
-						Select a model & click Load
+						Select a model (click Load to commit)
 						<span className='position-absolute top-0  start-50 translate-middle badge rounded-pill bg-danger'>
 							{Object.keys(modelsTable)[this.state.selectedModelIndex]}
 						</span>

@@ -44,7 +44,16 @@ export default class ModelSelectionPanel extends Component {
 				loadingMessage: this.selectedModel + ' is ready!',
 				loadSpinner: false,
 			});
+			// prevent leak - dispose previous model if already exists:
+			var temp = null;
+			if (this.model) {
+				temp = this.model;
+			}
 			this.model = res[0];
+			if (temp) {
+				temp.dispose();
+			}
+
 			this.classNames = res[1].split(/\r?\n/);
 			this.nclasses = this.classNames.length;
 			this.props.onLoadModel(this.model, this.classNames);
@@ -60,7 +69,7 @@ export default class ModelSelectionPanel extends Component {
 							className='btn btn-dark btn-lg  position-relative badge start-0'
 							onClick={this.onLoadModel}
 						>
-							Load
+							Load (stop streaming before )
 							<span className='position-absolute top-0  start-50 translate-middle badge rounded-pill bg-danger'>
 								{this.state.loadedModel}
 							</span>

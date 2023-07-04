@@ -239,20 +239,18 @@ class YoloV5 {
 			this.maxBoxes
 		);
 		scores.dispose();
-		if (selBboxes.shape[0] == 0) {
-			console.log('null');
-			tf.engine().endScope();
 
-			return null;
+		let composedImage = preprocImage.squeeze(0);
+		let masks = tf.tensor([]);
+		if (selBboxes.shape[0] != 0) {
+			[composedImage, masks] = this.procMasks.run(
+				preprocImage,
+				protos,
+				selMasksCoeffs,
+				selBboxes,
+				selclassIndices
+			);
 		}
-
-		const [composedImage, masks] = this.procMasks.run(
-			preprocImage,
-			protos,
-			selMasksCoeffs,
-			selBboxes,
-			selclassIndices
-		);
 
 		const bboxesArray = selBboxes.array();
 		const scoresArray = selScores.array();

@@ -17,6 +17,7 @@
 		"eject": "react-scripts eject"
 	},
 	"devDependencies": {
+		"@vitejs/plugin-react": "^2.2.0",
 		"gh-pages": "^4.0.0",
 		"react-scripts": "latest"
 	},

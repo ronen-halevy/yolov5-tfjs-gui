@@ -72,7 +72,12 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/a
 Ref:
 https://www.tensorflow.org/js/guide/conversion
 
-tensorflowjs_converter --input_format=keras /tmp/model /tmp/tfjs_model
+1. Install converter:
+   pip install tensorflowjs
+2. run conversion:
+
+tensorflowjs_converter --input_format=tf_saved_model /tmp/model /tmp/tfjs_model
+tensorflowjs_converter --input_format=tf_saved_model yolov5s-seg_saved_model /tmp/tfjs_model
 
 ### CDN modules
 

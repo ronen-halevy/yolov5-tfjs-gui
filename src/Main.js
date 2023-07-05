@@ -64,7 +64,6 @@ export class Main extends Component {
 	};
 
 	streamOnOff = (state) => {
-		console.log(state);
 		this.setState({ videoStreamOn: state });
 	};
 	modelSelectionPanel = () => {

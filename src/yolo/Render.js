@@ -84,11 +84,11 @@ class Render {
 		imageHeight
 	) => {
 		const context = this.canvas.getContext('2d');
-		// set canvas size - only on a change, otherwise image flickers!
-		if (imageWidth != this.canvas.width) {
+		// set canvas size - only on a change, otherwise image flickers! ignore transient's 0s)
+		if ((imageWidth != this.canvas.width) & imageWidth) {
 			this.canvas.width = imageWidth;
 		}
-		if (imageHeight != this.canvas.height) {
+		if ((imageHeight != this.canvas.height) & imageHeight) {
 			this.canvas.height = imageHeight;
 		}
 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Render } from '../Render.js';
+import { Render } from '../yolo/Render.js';
 import configRender from '../config/configRender.json';
 
 export class VideoControlPanel extends Component {

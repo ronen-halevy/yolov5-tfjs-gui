@@ -10,7 +10,6 @@ import configNms from './config/configNms.json';
 // import cdn module:
 import { YoloV5 } from './yolov5/YoloV5.js';
 
-import Render from './utils/Render.js';
 export class Main extends Component {
 	constructor(props) {
 		super(props);

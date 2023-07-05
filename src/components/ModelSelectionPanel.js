@@ -14,7 +14,6 @@ export default class ModelSelectionPanel extends Component {
 			// loadingMessage: 'No Model Loaded!',
 			loadSpinner: false,
 			loadProgress: 0,
-			modelText: '',
 		};
 		this.modelsTable = configModel.models;
 		// take first in list as a default:
@@ -54,7 +53,6 @@ export default class ModelSelectionPanel extends Component {
 			// loadingMessage: this.selectedModel + ' is ready!',
 			loadSpinner: false,
 			loadProgress: 0,
-			modelText: modelConfig.text,
 		});
 		// prevent leak - dispose previous model if exists:
 		if (this.model) {
@@ -70,13 +68,15 @@ export default class ModelSelectionPanel extends Component {
 	render() {
 		return (
 			<div className='selectModel row mt-3 '>
-				<div className=' col  text-center '>
+				<div className=' col-4  text-center '>
 					<SelectModelButtons
 						modelsTable={this.modelsTable}
 						setModel={this.setModel}
 					/>
 				</div>
-				<div className=' col text-center start-100'>
+				<div className=' col-4  text-center space holder'></div>
+
+				<div className=' col-4 text-center '>
 					{!this.props.hideButtons ? (
 						<span
 							className='btn btn-dark btn-lg  position-relative badge start-0'
@@ -96,9 +96,6 @@ export default class ModelSelectionPanel extends Component {
 							)}
 						</span>
 					) : null}
-				</div>
-				<div className=' col-4  text-center fw-bold'>
-					{this.state.modelText}
 				</div>
 			</div>
 		);

@@ -273,7 +273,7 @@ class YoloV5 {
 	};
 }
 
-const nms = (
+const nms = async (
 	bboxes,
 	scores,
 	classIndices,
@@ -282,32 +282,19 @@ const nms = (
 	scoreTHR,
 	maxBoxes
 ) => {
-	const nmsPromise = new Promise((resolve) => {
-		const nmsResults = tf.image.nonMaxSuppressionAsync(
-			bboxes,
-			scores,
-			maxBoxes,
-			iouTHR,
-			scoreTHR
-		);
-		resolve(nmsResults);
-	}).then((nmsResults) => {
-		var selectedBboxes = bboxes.gather(nmsResults);
-		var selectedClasses = classIndices.gather(nmsResults);
-		var selectedScores = scores.gather(nmsResults);
-		var selectedMasks = masks.gather(nmsResults);
-
-		var reasultArrays = Promise.all([
-			selectedBboxes,
-			selectedScores,
-			selectedClasses,
-			selectedMasks,
-		]);
-
-		return reasultArrays;
-	});
-
-	return nmsPromise;
+	const nmsResults = await tf.image.nonMaxSuppressionAsync(
+		bboxes,
+		scores,
+		maxBoxes,
+		iouTHR,
+		scoreTHR
+	);
+	return [
+		bboxes.gather(nmsResults),
+		scores.gather(nmsResults),
+		classIndices.gather(nmsResults),
+		masks.gather(nmsResults),
+	];
 };
 
 const createModel = (modelUrl, classNamesUrl) => {

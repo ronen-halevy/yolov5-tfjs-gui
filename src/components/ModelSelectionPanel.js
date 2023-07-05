@@ -25,9 +25,7 @@ export default class ModelSelectionPanel extends Component {
 
 	setModel = (results) => {
 		const { selectedModel } = results;
-		// this.setState({
-		console.log(this.selectedModel);
-
+		console.log('selectedModel', this.selectedModel);
 		this.selectedModel = selectedModel;
 	};
 

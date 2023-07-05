@@ -9,6 +9,10 @@
 		"YoloV5sCoco": {
 			"modelUrl": "`${window.location.href}//models/yolov5s/model.json`",
 			"classNamesUrl": "https://raw.githubusercontent.com/ronen-halevy/yolov3-tfjs-gui/master/data/cocoClassNames.txt"
+		},
+		"YoloV5mCoco": {
+			"modelUrl": "`${window.location.href}//models/yolov5m/model.json`",
+			"classNamesUrl": "https://raw.githubusercontent.com/ronen-halevy/yolov3-tfjs-gui/master/data/cocoClassNames.txt"
 		}
 	}
 }

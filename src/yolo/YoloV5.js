@@ -240,8 +240,8 @@ class YoloV5 {
 		);
 		scores.dispose();
 
-		let composedImage = preprocImage.squeeze(0);
-		let masks = tf.tensor([]);
+		// bypass masks if no detections:
+		let [composedImage, masks] = [null, null];
 		if (selBboxes.shape[0] != 0) {
 			[composedImage, masks] = this.procMasks.run(
 				preprocImage,
@@ -250,6 +250,9 @@ class YoloV5 {
 				selBboxes,
 				selclassIndices
 			);
+		} else {
+			composedImage = preprocImage.squeeze(0);
+			masks = tf.zeros(composedImage.shape);
 		}
 
 		const bboxesArray = selBboxes.array();

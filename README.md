@@ -76,7 +76,6 @@ https://www.tensorflow.org/js/guide/conversion
    pip install tensorflowjs
 2. run conversion:
 
-tensorflowjs_converter --input_format=tf_saved_model /tmp/model /tmp/tfjs_model
 tensorflowjs_converter --input_format=tf_saved_model yolov5s-seg_saved_model /tmp/tfjs_model
 
 ### CDN modules

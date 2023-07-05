@@ -261,15 +261,13 @@ class YoloV5 {
 		tf.engine().endScope();
 
 		// conversion to array is asunc:
-		var reasultArrays = Promise.all([
+		return Promise.all([
 			bboxesArray,
 			scoresArray,
 			classIndicesArray,
 			composedImageArray,
 			masksArray,
 		]);
-
-		return reasultArrays;
 	};
 }
 

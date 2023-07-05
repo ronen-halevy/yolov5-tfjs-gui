@@ -19,6 +19,7 @@ export class Main extends Component {
 		this.dataType = '';
 		this.state = {
 			classNames: '',
+			videoStreamOn: false,
 		};
 		this.yoloCreated = false;
 	}
@@ -62,59 +63,84 @@ export class Main extends Component {
 		this.dataType = type;
 	};
 
+	streamOnOff = (state) => {
+		console.log(state);
+		this.setState({ videoStreamOn: state });
+	};
+	modelSelectionPanel = () => {
+		return (
+			<div className='model  border border-1 border-secondary position-relative bg-light'>
+				<ModelSelectionPanel
+					onLoadModel={this.onLoadModel}
+					hideButtons={this.state.videoStreamOn}
+				/>
+			</div>
+		);
+	};
+	configurationsPanel = () => {
+		return (
+			<div className='configButtons border border-1 border-secondary position-relative  bg-light'>
+				<div className='row mb-2'>
+					{/* send configs updates not before object is constructed */}
+					{this.yoloCreated && (
+						<ConfigurationsPanel
+							setScoreTHR={this.setScoreTHR}
+							setIouTHR={this.setIouTHR}
+							setMaxBoxes={this.setMaxBoxes}
+						/>
+					)}
+				</div>
+			</div>
+		);
+	};
+
+	videoControlPanel = () => {
+		return (
+			<div className='col  border border-1 border-secondary bg-light '>
+				<div className='row mb-2'>
+					<VideoControlPanel
+						streamOnOff={this.streamOnOff}
+						detectFrame={this.detectFrame}
+						classNames={this.state.classNames}
+						inputUrl={{ url: this.dataUrl, type: this.dataType }}
+					/>
+				</div>
+			</div>
+		);
+	};
+
 	render() {
 		const {} = this.props;
 		return (
 			<div className='container '>
-				<h2 className='text-center mb-1 mt-2'>YoloV5 TfJs Demo</h2>
+				<h2 className='text-center mb-1 mt-2'>Serverless Image Segmentation</h2>
+				<h5 className='text-center mb-1 mt-2'>Yolo Tfjs</h5>
 				<Accordion />
 
 				<div className='col '>
 					<div className=' row text-center'>
 						<div className=' col'>Model Selection</div>
 					</div>
-					<div className='model  border border-1 border-secondary position-relative bg-light'>
-						<ModelSelectionPanel onLoadModel={this.onLoadModel} />
-					</div>
-
+					{/* {!this.state.videoStreamOn ?  */}
+					<this.modelSelectionPanel />
+					{/* : null} */}
 					<div className=' row text-center'>
 						<div className=' col'>Data Source Selection </div>
 					</div>
-
 					<div className='dataSource border border-1 border-secondary position-relative bg-light'>
 						<DataSourceSelectionPanel
 							onClickSetDataSource={this.onClickSetDataSource}
 						/>
 					</div>
-
 					<div className=' row text-center'>
 						<div className=' col'>Configurations </div>
 					</div>
-					<div className='configButtons border border-1 border-secondary position-relative  bg-light'>
-						<div className='row mb-2'>
-							{/* send configs updates not before object is constructed */}
-							{this.yoloCreated && (
-								<ConfigurationsPanel
-									setScoreTHR={this.setScoreTHR}
-									setIouTHR={this.setIouTHR}
-									setMaxBoxes={this.setMaxBoxes}
-								/>
-							)}
-						</div>
-					</div>
+					<this.configurationsPanel />
 				</div>
 				<div className=' row text-center'>
 					<div className=' col'>Video Control</div>
 				</div>
-				<div className='col  border border-1 border-secondary bg-light '>
-					<div className='row mb-2'>
-						<VideoControlPanel
-							detectFrame={this.detectFrame}
-							classNames={this.state.classNames}
-							inputUrl={{ url: this.dataUrl, type: this.dataType }}
-						/>
-					</div>
-				</div>
+				<this.videoControlPanel />
 			</div>
 		);
 	}

@@ -13,6 +13,7 @@ export default class ModelSelectionPanel extends Component {
 			loadedModel: '',
 			loadingMessage: 'No Model Loaded!',
 			loadSpinner: false,
+			loadProgress: 0,
 		};
 		this.modelsTable = configModel.models;
 		// take first in list as a default:
@@ -29,30 +30,34 @@ export default class ModelSelectionPanel extends Component {
 		this.selectedModel = selectedModel;
 	};
 
+	onProgress = (fractions) => {
+		this.setState({ loadProgress: (fractions * 100).toFixed(2) });
+	};
+
 	onLoadModel = async () => {
 		this.setState({ loadingMessage: 'Loading Model...', loadSpinner: true });
 
 		const modelConfig = this.modelsTable[this.selectedModel];
 		const { modelUrl, classNamesUrl, ...rest } = modelConfig;
 
-		const res = await createModel(modelUrl, classNamesUrl);
+		const [model, classNames] = await createModel(
+			modelUrl,
+			classNamesUrl,
+			this.onProgress
+		);
 		this.setState({
 			loadedModel: this.selectedModel,
 
 			loadingMessage: this.selectedModel + ' is ready!',
 			loadSpinner: false,
 		});
-		// prevent leak - dispose previous model if already exists:
-		var temp = null;
+		// prevent leak - dispose previous model if exists:
 		if (this.model) {
-			temp = this.model;
+			this.model.dispose();
 		}
-		this.model = res[0];
-		if (temp) {
-			temp.dispose();
-		}
+		this.model = model;
 
-		this.classNames = res[1].split(/\r?\n/);
+		this.classNames = classNames.split(/\r?\n/);
 		this.nclasses = this.classNames.length;
 		this.props.onLoadModel(this.model, this.classNames);
 	};
@@ -72,8 +77,11 @@ export default class ModelSelectionPanel extends Component {
 									{this.state.loadedModel}
 								</span>
 								{this.state.loadSpinner && (
-									<div className='spinner-border' role='status'>
-										<span className='sr-only'></span>
+									<div className='col'>
+										<div className='spinner-border' role='status'>
+											<span className='sr-only'></span>
+										</div>
+										{this.state.loadProgress}%
 									</div>
 								)}
 							</span>

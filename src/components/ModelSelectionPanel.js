@@ -50,6 +50,7 @@ export default class ModelSelectionPanel extends Component {
 
 			loadingMessage: this.selectedModel + ' is ready!',
 			loadSpinner: false,
+			loadProgress: 0,
 		});
 		// prevent leak - dispose previous model if exists:
 		if (this.model) {

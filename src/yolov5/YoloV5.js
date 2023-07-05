@@ -297,18 +297,14 @@ const nms = async (
 	];
 };
 
-const createModel = (modelUrl, classNamesUrl) => {
+const createModel = async (modelUrl, classNamesUrl) => {
 	// in case of local url, eval to have the back ticked (`) address:
 	if (modelUrl.includes('window.location.href')) {
 		modelUrl = eval(modelUrl);
 	}
-
-	const modelPromise = tf.loadGraphModel(modelUrl);
-
-	const classNamesPromise = fetch(classNamesUrl).then((x) => x.text());
-
-	const promise = Promise.all([modelPromise, classNamesPromise]);
-	return promise;
+	const modelPromise = await tf.loadGraphModel(modelUrl);
+	const classNamesPromise = await fetch(classNamesUrl).then((x) => x.text());
+	return [modelPromise, classNamesPromise];
 };
 
 export { YoloV5, createModel };

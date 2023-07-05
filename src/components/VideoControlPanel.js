@@ -45,6 +45,8 @@ export class VideoControlPanel extends Component {
 				? this.vfbfStreamer.playVideo(this.props.inputUrl['url'])
 				: this.vfbfStreamer.playImage(this.props.inputUrl['url']);
 		this.setState({ isVideoPlaying: isVideoPlaying });
+
+		this.props.streamOnOff(isVideoPlaying);
 	};
 
 	onChangeCurrentTime = (e) => {
@@ -81,20 +83,19 @@ export class VideoControlPanel extends Component {
 		this.lastLoop = thisLoop;
 		return fps;
 	}
-	vfbfStreamerFrameCbk = (frame, currentTime, duration) => {
-		const detect = this.props.detectFrame(frame);
-		detect.then((detectResults) => {
-			const isVideoFrame = duration != 0;
-			if (detectResults) {
-				this.doRender(frame, detectResults, currentTime, isVideoFrame);
-				// avoid if image (not a video):
-			}
-			if (isVideoFrame) {
-				this.statsDisplay(currentTime, duration);
-				this.vfbfStreamer.animationControl();
-			}
-		});
+	vfbfStreamerFrameCbk = async (frame, currentTime, duration) => {
+		const detectResults = await this.props.detectFrame(frame);
+		const isVideoFrame = duration != 0;
+		if (detectResults) {
+			this.doRender(frame, detectResults, currentTime, isVideoFrame);
+			// avoid if image (not a video):
+		}
+		if (isVideoFrame) {
+			this.statsDisplay(currentTime, duration);
+			this.vfbfStreamer.animationControl();
+		}
 	};
+
 	statsDisplay = (currentTime, duration) => {
 		const fps = this.findFps();
 		this.setState({
@@ -129,6 +130,7 @@ export class VideoControlPanel extends Component {
 
 	vfbfStreamerEndedCbk = () => {
 		this.setState({ isVideoPlaying: false });
+		this.props.streamOnOff(false);
 	};
 
 	render() {
@@ -145,7 +147,7 @@ export class VideoControlPanel extends Component {
 								onClick={this.onClickDisplayMode}
 							>
 								{' '}
-								Mode
+								DisplayMode
 								<span className='position-absolute top-0 start-50 translate-middle badge rounded-pill bg-danger '>
 									{this.state.displayMode}
 								</span>

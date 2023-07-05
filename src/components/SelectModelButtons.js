@@ -35,7 +35,7 @@ export default class SelectModelButtons extends Component {
 		const { modelsTable, ...result } = this.props;
 		return (
 			<React.Fragment>
-				<div className='col-4  text-center mb-3'>
+				<div className=' text-center mb-3'>
 					<span
 						className='btn btn-dark btn-lg  position-relative badge start-0'
 						onClick={this.onClickedSelectModel}

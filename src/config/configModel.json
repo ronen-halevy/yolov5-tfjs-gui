@@ -4,15 +4,18 @@
 			"modelUrl1": "http://localhost:xxxx/yolov5-tfjs-gui/models/yolov5n/model.json",
 			"modelUrl": "`${window.location.href}//models/yolov5n/model.json`",
 			"modelUrl2": "https://raw.githubusercontent.com/ronen-halevy/yolov5-tfjs-gui/master/models/yolov5n/model.json",
-			"classNamesUrl": "https://raw.githubusercontent.com/ronen-halevy/yolov3-tfjs-gui/master/data/cocoClassNames.txt"
+			"classNamesUrl": "https://raw.githubusercontent.com/ronen-halevy/yolov3-tfjs-gui/master/data/cocoClassNames.txt",
+			"text": "2M params-Coco weights"
 		},
 		"YoloV5sCoco": {
 			"modelUrl": "`${window.location.href}//models/yolov5s/model.json`",
-			"classNamesUrl": "https://raw.githubusercontent.com/ronen-halevy/yolov3-tfjs-gui/master/data/cocoClassNames.txt"
+			"classNamesUrl": "https://raw.githubusercontent.com/ronen-halevy/yolov3-tfjs-gui/master/data/cocoClassNames.txt",
+			"text": "7.6M params-Coco weights"
 		},
 		"YoloV5mCoco": {
 			"modelUrl": "`${window.location.href}//models/yolov5m/model.json`",
-			"classNamesUrl": "https://raw.githubusercontent.com/ronen-halevy/yolov3-tfjs-gui/master/data/cocoClassNames.txt"
+			"classNamesUrl": "https://raw.githubusercontent.com/ronen-halevy/yolov3-tfjs-gui/master/data/cocoClassNames.txt",
+			"text": "22M params-Coco weights"
 		}
 	}
 }

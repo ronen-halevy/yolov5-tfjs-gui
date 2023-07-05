@@ -11,9 +11,10 @@ export default class ModelSelectionPanel extends Component {
 
 		this.state = {
 			loadedModel: '',
-			loadingMessage: 'No Model Loaded!',
+			// loadingMessage: 'No Model Loaded!',
 			loadSpinner: false,
 			loadProgress: 0,
+			modelText: '',
 		};
 		this.modelsTable = configModel.models;
 		// take first in list as a default:
@@ -26,7 +27,6 @@ export default class ModelSelectionPanel extends Component {
 
 	setModel = (results) => {
 		const { selectedModel } = results;
-		console.log('selectedModel', this.selectedModel);
 		this.selectedModel = selectedModel;
 	};
 
@@ -35,7 +35,10 @@ export default class ModelSelectionPanel extends Component {
 	};
 
 	onLoadModel = async () => {
-		this.setState({ loadingMessage: 'Loading Model...', loadSpinner: true });
+		this.setState({
+			// loadingMessage: 'Loading Model...',
+			loadSpinner: true,
+		});
 
 		const modelConfig = this.modelsTable[this.selectedModel];
 		const { modelUrl, classNamesUrl, ...rest } = modelConfig;
@@ -48,9 +51,10 @@ export default class ModelSelectionPanel extends Component {
 		this.setState({
 			loadedModel: this.selectedModel,
 
-			loadingMessage: this.selectedModel + ' is ready!',
+			// loadingMessage: this.selectedModel + ' is ready!',
 			loadSpinner: false,
 			loadProgress: 0,
+			modelText: modelConfig.text,
 		});
 		// prevent leak - dispose previous model if exists:
 		if (this.model) {
@@ -65,33 +69,36 @@ export default class ModelSelectionPanel extends Component {
 
 	render() {
 		return (
-			<div>
-				<div className='selectModel row mt-2'>
-					<div className='col-4  text-center '>
-						{!this.props.hideButtons ? (
-							<span
-								className='btn btn-dark btn-lg  position-relative badge start-0'
-								onClick={this.onLoadModel}
-							>
-								Load
-								<span className='position-absolute top-0  start-50 translate-middle badge rounded-pill bg-danger'>
-									{this.state.loadedModel}
-								</span>
-								{this.state.loadSpinner && (
-									<div className='col'>
-										<div className='spinner-border' role='status'>
-											<span className='sr-only'></span>
-										</div>
-										{this.state.loadProgress}%
-									</div>
-								)}
-							</span>
-						) : null}
-					</div>
+			<div className='selectModel row mt-3 '>
+				<div className=' col  text-center '>
 					<SelectModelButtons
 						modelsTable={this.modelsTable}
 						setModel={this.setModel}
 					/>
+				</div>
+				<div className=' col text-center start-100'>
+					{!this.props.hideButtons ? (
+						<span
+							className='btn btn-dark btn-lg  position-relative badge start-0'
+							onClick={this.onLoadModel}
+						>
+							Load
+							<span className='position-absolute top-0  start-50 translate-middle badge rounded-pill bg-danger'>
+								{this.state.loadedModel}
+							</span>
+							{this.state.loadSpinner && (
+								<div className='col'>
+									<div className='spinner-border' role='status'>
+										<span className='sr-only'></span>
+									</div>
+									{this.state.loadProgress}%
+								</div>
+							)}
+						</span>
+					) : null}
+				</div>
+				<div className=' col-4  text-center fw-bold'>
+					{this.state.modelText}
 				</div>
 			</div>
 		);

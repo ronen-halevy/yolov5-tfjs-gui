@@ -40,19 +40,20 @@ export class VideoControlPanel extends Component {
 
 	// elements callbacks:
 	onClickPlay = async () => {
-		if (this.props.inputUrl['type'] == 'video') {
-			var isVideoPlaying = this.vfbfStreamer.playVideo(
+		// stop if streaming to avoid collisions:
+		if (this.state.isVideoPlaying) {
+			const isVideoPlaying = this.vfbfStreamer.stopVideo();
+			this.setState({ isVideoPlaying: isVideoPlaying }, () =>
+				this.props.streamOnOff(isVideoPlaying)
+			);
+		} else if (this.props.inputUrl['type'] == 'video') {
+			const isVideoPlaying = this.vfbfStreamer.playVideo(
 				this.props.inputUrl['url']
 			);
 			this.setState({ isVideoPlaying: isVideoPlaying });
 			this.props.streamOnOff(isVideoPlaying);
 		} else {
-			if (!this.state.isVideoPlaying) {
-				await this.loadImage(this.props.inputUrl['url'], this.imageLoadedCbk);
-			} else {
-				var isVideoPlaying = this.vfbfStreamer.stopVideo();
-				alert(`Stopped streaming. Click canvas again to display image`);
-			}
+			await this.loadImage(this.props.inputUrl['url'], this.imageLoadedCbk);
 		}
 	};
 

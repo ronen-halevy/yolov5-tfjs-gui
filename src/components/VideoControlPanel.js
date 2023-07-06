@@ -39,14 +39,21 @@ export class VideoControlPanel extends Component {
 	}
 
 	// elements callbacks:
-	onClickPlay = () => {
-		var isVideoPlaying =
-			this.props.inputUrl['type'] == 'video'
-				? this.vfbfStreamer.playVideo(this.props.inputUrl['url'])
-				: this.vfbfStreamer.playImage(this.props.inputUrl['url']);
-		this.setState({ isVideoPlaying: isVideoPlaying });
-
-		this.props.streamOnOff(isVideoPlaying);
+	onClickPlay = async () => {
+		if (this.props.inputUrl['type'] == 'video') {
+			var isVideoPlaying = this.vfbfStreamer.playVideo(
+				this.props.inputUrl['url']
+			);
+			this.setState({ isVideoPlaying: isVideoPlaying });
+			this.props.streamOnOff(isVideoPlaying);
+		} else {
+			if (!this.state.isVideoPlaying) {
+				await this.loadImage(this.props.inputUrl['url'], this.imageLoadedCbk);
+			} else {
+				var isVideoPlaying = this.vfbfStreamer.stopVideo();
+				alert(`Stopped streaming. Click canvas again to display image`);
+			}
+		}
 	};
 
 	onChangeCurrentTime = (e) => {
@@ -83,6 +90,33 @@ export class VideoControlPanel extends Component {
 		this.lastLoop = thisLoop;
 		return fps;
 	}
+
+	loadImage = async (dataUrl, callback) => {
+		var imageObject = new window.Image();
+		const res = await fetch(dataUrl);
+		const imageBlob = await res.blob();
+		const imageObjectURL = URL.createObjectURL(imageBlob);
+		imageObject.src = imageObjectURL;
+		imageObject.addEventListener('load', async () => {
+			callback(imageObject, 0, 0);
+		});
+	};
+
+	imageLoadedCbk = async (imageObject) => {
+		const [selBboxes, scores, classIndices, composedImage, masks] =
+			await this.props.detectFrame(imageObject);
+
+		this.draw.renderOnImage(
+			composedImage,
+			selBboxes,
+			scores,
+			classIndices,
+			this.props.classNames,
+			imageObject.width,
+			imageObject.height
+		);
+	};
+
 	vfbfStreamerFrameCbk = async (frame, currentTime, duration) => {
 		const detectResults = await this.props.detectFrame(frame);
 		const isVideoFrame = duration != 0;

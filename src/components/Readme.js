@@ -8,38 +8,39 @@ export default class Readme extends React.Component {
 			<div className='accordion-body'>
 				<h2>Welcome to the YoloV5 Tfjs Demo!</h2>
 				<br /> <br />
+				<h3>TL-DR</h3>
+				The app is set with default configurations, so you are ready to press
+				play, (i.e. click on canvas), and run the default video selection!
+				<h6>Supported Input Data Sources:</h6>
+				<ul>
+					<li>Video from a list</li>
+					<li>Uploaded video from local device</li>
+					<li>Uploaded image from local device</li>
+				</ul>
 				<h3>Introduction</h3> <br />
-				This app demonstrates an original Javascript+ Tensorflow-JS
-				implementation of `Ultralytics`
+				This is a Tensorflow-JS based mplementation of Ultralytics{' '}
 				<a href='https://github.com/ultralytics/yolov5'>YoloV5 Repositoy.</a>
 				<br />
 				The app classifies object, assigns them with bounding boxes and performs
 				instance segmentation.
 				<br />
 				<br />
-				<h3>A brief description</h3>
-				Yolo is a CNN-based object detection algorithm. Acronym of `Y`ou `O`nly
-				`L`ook `O`nce, indicates that prediction requires a single pass of the
-				input, as opposed to algorithms such as R-CNN which need an preceding
-				pass for ROI search. The single pass results in better performance in
-				terms of computation load, and thus process time.
-				<br /> <br />
-				<h3>A brief user's guide</h3> The app is set with default
-				configurations, so you are ready to press play and run the default video
-				selection!
-				<br />
-				Then, you may either load images or video files from local storage or
-				select a video from a list - the selected video will be fetched by its
-				URL.
+				<h3>A brief on Yolo</h3>
+				Yolo is a CNN-based object detection algorithm. Named with the acronym
+				of <b>Y</b>ou
+				<b>O</b>nly <b>L</b>ook <b>O</b>nce, which indicates that it uses a
+				single pass prediction, as opposed to algorithms such as R-CNN which
+				uses an extra ROI search pass. A single pass results in better
+				performance in terms of computation load, and accordingly, processing
+				time.
 				<br /> <br />
 				<h3>The UI </h3>
 				The UI is implemented by ReactJS. It consists of 5 sections: an
-				accordion Readme section, 4 mini-buttons panel sections, and the
-				rendering canvas, placed on the bottom. <br /> <br />
-				<h4>Mini-buttons panels</h4>
-				The 4 mini-button panels, are described next.
+				accordion Readme section (you are now reading), and 4 panel sections, as
+				detailed next. rendering canvas, placed on the bottom. <br /> <br />
+				<h4>Panel Sections</h4>
 				<br /> <br />
-				<h4>Model Selection panel</h4>
+				<h4>1. Model Selection panel</h4>
 				<br />
 				<h5>Select a model button</h5>
 				Yolov5 has 5 versions - n (nano), s(small), m(medium),l (large), x (xl),
@@ -56,7 +57,7 @@ export default class Readme extends React.Component {
 				button.
 				<br />
 				<br />
-				<h4>Data Source Selection panel</h4>
+				<h4>2. Data Source Selection panel</h4>
 				<br /> <br />
 				<h5>Data source button</h5>
 				This button selects the source of consumed data, i.e. the input image or
@@ -77,7 +78,7 @@ export default class Readme extends React.Component {
 				<strong>File Selection: </strong> Selects an image or video file from
 				local storage.
 				<br /> <br />
-				<h4>Configuration Panel</h4>
+				<h4>3. Configuration Panel</h4>
 				The panel consists of 3 configuration buttons. The buttons&rsquo; effect
 				is immediate, even while a video play. A button click cyclically
 				increments the value.
@@ -100,7 +101,7 @@ export default class Readme extends React.Component {
 				<h5>Max Boxes button </h5>
 				This button sets the max number of bounding boxes.
 				<br /> <br />
-				<h4>Video Control panel</h4>
+				<h4>4. Video Control panel</h4>
 				<br />
 				<h5>Display Mode button </h5>
 				Selects between `composed` mode, which displays the original with bboxes
@@ -120,7 +121,7 @@ export default class Readme extends React.Component {
 				<h5>Scale button </h5>
 				Scales canvas size.
 				<br /> <br />
-				<h4> Canvas panel </h4>
+				<h4> Canvas </h4>
 				Both images and videos are rendered on the same canvas. Touching (or
 				clicking) the canvas surface triggers <b>play</b> and <b>stop</b> of
 				process.

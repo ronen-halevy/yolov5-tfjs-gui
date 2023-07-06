@@ -6,7 +6,7 @@ export default class Readme extends React.Component {
 	render() {
 		return (
 			<div className='accordion-body'>
-				<h2>Welcome to the Yolo Tfjs Demo!</h2>
+				<h2>Welcome to the YoloV5 Tfjs Demo!</h2>
 				<br /> <br />
 				<h3>Introduction</h3> <br />
 				This app demonstrates an original Javascript+ Tensorflow-JS

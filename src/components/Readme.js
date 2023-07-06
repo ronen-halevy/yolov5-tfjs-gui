@@ -53,8 +53,7 @@ export default class Readme extends React.Component {
 				<br />
 				<h5>Load button</h5>
 				The selected model and weights are loaded only after pressing this
-				button. Load button is hidden during video streaming, to prevent
-				collisions which hot model switching may cause.
+				button.
 				<br />
 				<br />
 				<h4>Data Source Selection panel</h4>

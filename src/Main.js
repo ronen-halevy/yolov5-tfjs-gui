@@ -112,7 +112,7 @@ export class Main extends Component {
 		return (
 			<div className='container '>
 				<h2 className='text-center mb-1 mt-2'>Serverless Image Segmentation</h2>
-				<h5 className='text-center mb-1 mt-2'>Yolo Tfjs</h5>
+				<h5 className='text-center mb-1 mt-2'>YoloV5 Tfjs</h5>
 				<Accordion />
 
 				<div className='col '>

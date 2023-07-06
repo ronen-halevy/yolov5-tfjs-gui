@@ -35,7 +35,7 @@ export default class ModelSelectionPanel extends Component {
 
 	onLoadModel = async () => {
 		if (this.props.videoStreamOn) {
-			alert(`Can't switch models while streaming`); // if streaming video or webcam
+			alert(`Can't Load while streaming`); // if streaming video or webcam
 			return;
 		}
 

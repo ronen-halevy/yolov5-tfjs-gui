@@ -70,7 +70,7 @@ export class Main extends Component {
 			<div className='model  border border-1 border-secondary position-relative bg-light'>
 				<ModelSelectionPanel
 					onLoadModel={this.onLoadModel}
-					hideButtons={this.state.videoStreamOn}
+					videoStreamOn={this.state.videoStreamOn}
 				/>
 			</div>
 		);

@@ -34,6 +34,11 @@ export default class ModelSelectionPanel extends Component {
 	};
 
 	onLoadModel = async () => {
+		if (this.props.videoStreamOn) {
+			alert(`Can't switch models while streaming`); // if streaming video or webcam
+			return;
+		}
+
 		this.setState({
 			// loadingMessage: 'Loading Model...',
 			loadSpinner: true,
@@ -77,25 +82,23 @@ export default class ModelSelectionPanel extends Component {
 				<div className=' col-4  text-center space holder'></div>
 
 				<div className=' col-4 text-center '>
-					{!this.props.hideButtons ? (
-						<span
-							className='btn btn-dark btn-lg  position-relative badge start-0'
-							onClick={this.onLoadModel}
-						>
-							Load
-							<span className='position-absolute top-0  start-50 translate-middle badge rounded-pill bg-danger'>
-								{this.state.loadedModel}
-							</span>
-							{this.state.loadSpinner && (
-								<div className='col'>
-									<div className='spinner-border' role='status'>
-										<span className='sr-only'></span>
-									</div>
-									{this.state.loadProgress}%
-								</div>
-							)}
+					<span
+						className='btn btn-dark btn-lg  position-relative badge start-0'
+						onClick={this.onLoadModel}
+					>
+						Load
+						<span className='position-absolute top-0  start-50 translate-middle badge rounded-pill bg-danger'>
+							{this.state.loadedModel}
 						</span>
-					) : null}
+						{this.state.loadSpinner && (
+							<div className='col'>
+								<div className='spinner-border' role='status'>
+									<span className='sr-only'></span>
+								</div>
+								{this.state.loadProgress}%
+							</div>
+						)}
+					</span>
 				</div>
 			</div>
 		);

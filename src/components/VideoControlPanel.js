@@ -52,8 +52,10 @@ export class VideoControlPanel extends Component {
 			);
 			this.setState({ isVideoPlaying: isVideoPlaying });
 			this.props.streamOnOff(isVideoPlaying);
-		} else {
+		} else if (this.props.inputUrl['type'] == 'image') {
 			await this.loadImage(this.props.inputUrl['url'], this.imageLoadedCbk);
+		} else {
+			alert(`Must select a data source`); // if streaming video or webcam
 		}
 	};
 

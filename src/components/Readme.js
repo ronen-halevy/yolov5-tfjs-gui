@@ -9,8 +9,7 @@ export default class Readme extends React.Component {
 				<h2>Welcome to the YoloV5 Tfjs Demo!</h2>
 				<br /> <br />
 				<h3>TL-DR</h3>
-				The app is set with default configurations, so you are ready to press
-				play, (i.e. click on canvas), and run the default video selection!
+				The app is s ready to run. Click on Canvas to play the selected video!
 				<h6>Supported Input Data Sources:</h6>
 				<ul>
 					<li>Video from a list</li>
@@ -140,8 +139,6 @@ export default class Readme extends React.Component {
 				<br />
 				<br />
 				<br />
-				<br />
-				Please contact me for feedback!
 				<br />
 				Ronen Halevy
 				<br />

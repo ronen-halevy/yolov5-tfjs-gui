@@ -9,78 +9,54 @@ export default class Readme extends React.Component {
 				<h2>Welcome to the YoloV5 Tfjs Demo!</h2>
 				<br /> <br />
 				<h3>TL-DR</h3>
-				The app is s ready to run. Click on Canvas to play the selected video!
-				<h6>Supported Input Data Sources:</h6>
-				<ul>
-					<li>Video from a list</li>
-					<li>Uploaded video from local device</li>
-					<li>Uploaded image from local device</li>
-				</ul>
-				<h3>Introduction</h3> <br />
-				This is a Tensorflow-JS based mplementation of Ultralytics{' '}
-				<a href='https://github.com/ultralytics/yolov5'>YoloV5 Repositoy.</a>
+				The app is ready to go - clicking canvas starts execution with defaults.
 				<br />
-				The app classifies object, assigns them with bounding boxes and performs
-				instance segmentation.
+				<br />
+				<h3>Introduction</h3> <br />
+				This app classifies objects, marks them with bounding boxes and instance
+				segmentation colored masks. This implementation uses the{' '}
+				<i>Tensorflow-JS</i>
+				framework, and is based on <i>Ultralytics</i>{' '}
+				<a href='https://github.com/ultralytics/yolov5'>YoloV5 repository</a>
 				<br />
 				<br />
 				<h3>A brief on Yolo</h3>
-				Yolo is a CNN-based object detection algorithm. Named with the acronym
-				of <b>Y</b>ou
-				<b>O</b>nly <b>L</b>ook <b>O</b>nce, which indicates that it uses a
-				single pass prediction, as opposed to algorithms such as R-CNN which
-				uses an extra ROI search pass. A single pass results in better
-				performance in terms of computation load, and accordingly, processing
-				time.
-				<br /> <br />
+				Yolo is a CNN-based object detection algorithm. The acronym of <b>Y</b>
+				ou <b>O</b>nly <b>L</b>ook <b>O</b>nce, refers to the single pass
+				prediction process, as opposed to algorithms such as R-CNN, which uses
+				an extra pass for ROI search. A single pass results better speed, which
+				is essential for real time video with larger fps rate. <br /> <br />
 				<h3>The UI </h3>
-				The UI is implemented by ReactJS. It consists of 5 sections: an
-				accordion Readme section (you are now reading), and 4 panel sections, as
-				detailed next. rendering canvas, placed on the bottom. <br /> <br />
+				The UI is implemented using <i>ReactJS</i> with <i>Bootstrap</i> for
+				styling. The interface consists 4 panel sections detailed next <br />{' '}
+				<br />
 				<h4>Panel Sections</h4>
-				<br /> <br />
+				<br />
 				<h4>1. Model Selection panel</h4>
 				<br />
-				<h5>Select a model button</h5>
-				Yolov5 has 5 versions - n (nano), s(small), m(medium),l (large), x (xl),
-				which offer increaded computations with better accuracy,but slower
-				performance. Selection is between YoloV5n,s & m. You should probably
-				avoid the heavier versions if running on a lightweight processor, e.g. a
-				smartphone. The model selection is bundeled with the selection of
-				weights, i.e. `YoloV5sCoco``selection option refers to `YoloV5s` with
-				Coco trained weights. (`Coco`` dataset is a commonly used large-scale
-				object detection dataset with 80 object classes).
+				Yolov5 comes with 5 flavors, from the lightest Yolov5n (nano) to Yolov5x
+				(xl). The trade-off is accuracy versus computation load and speed. The
+				lightest and fastest is Yolov5n (nano) while the heaviest is Yolov5x
+				(xl). To avoid lags on video runs, select lighter flavors on lightweight
+				processors.
 				<br />
-				<h5>Load button</h5>
-				The selected model and weights are loaded only after pressing this
-				button.
+				<b>Note: </b>A selected model is downloaded only after clicking{' '}
+				<b>Load</b> button.
 				<br />
 				<br />
 				<h4>2. Data Source Selection panel</h4>
-				<br /> <br />
-				<h5>Data source button</h5>
-				This button selects the source of consumed data, i.e. the input image or
-				video files. Selection is between uploading from local storage, or
-				fetching, (currently videos only), from video sites.
-				<br /> <br />
-				<h5>Input Selection button</h5>
-				According to data source selection, the input selection will present
-				either selection from a url data source or from selection of file from
-				local storage.
 				<br />
-				<strong>Url Selection: </strong> The button cyclically moves the
-				selection to the next video URL on the list. To keep it compact, the URL
-				is not presented, but only a short-form name of the video. The
-				item&rsquo;s index is displayed as a badge in the upper right corner. A
-				blower badge credits the video providor website.
+				Supported Input Data Sources are:
+				<ul>
+					<li>Video from a list (fetched from from video websites)</li>
+					<li>Uploaded video from local device</li>
+					<li>Uploaded image from local device</li>
+				</ul>
 				<br />
-				<strong>File Selection: </strong> Selects an image or video file from
-				local storage.
-				<br /> <br />
 				<h4>3. Configuration Panel</h4>
+				<br />
 				The panel consists of 3 configuration buttons. The buttons&rsquo; effect
-				is immediate, even while a video play. A button click cyclically
-				increments the value.
+				is immediate, even while a video play.
 				<br /> <br />
 				<h5>ScoreTHLD button </h5>
 				This button sets the threshold for the detection confidence score. The
@@ -89,13 +65,14 @@ export default class Readme extends React.Component {
 				thresholds, and missed detections for higher thresholds.
 				<br /> <br />
 				<h5>IouTHLD button </h5>
-				This button sets the threshold for Iou, an acronym for Intersection Over
-				Union. Iou measures the amount of overlap between adjacent bounding
-				boxes. The value range is between 0 and 1. Detections with scores below
-				thresholds are filtered out. The lower the IOU threshold is, the less
-				overlapping boxes are displayed. The tradeoff is between missing
-				detections of close objects for lower thresholds and receiving false
-				duplicated detections for higher thresholds.
+				This button sets the threshold for Iou, an acronym for <b>I</b>
+				ntersection <b>O</b>ver
+				<b>U</b>nion. Iou measures the amount of overlap between adjacent
+				bounding boxes. The value range is between 0 and 1. Detections with
+				scores below thresholds are filtered out. The lower the IOU threshold
+				is, the less overlapping boxes are displayed. The tradeoff is between
+				missing detections of close objects for lower thresholds and receiving
+				false duplicated detections for higher thresholds.
 				<br /> <br />
 				<h5>Max Boxes button </h5>
 				This button sets the max number of bounding boxes.
@@ -103,9 +80,9 @@ export default class Readme extends React.Component {
 				<h4>4. Video Control panel</h4>
 				<br />
 				<h5>Display Mode button </h5>
-				Selects between `composed` mode, which displays the original with bboxes
-				and segmentation masks overlay, and `mask` which displays the overlays
-				only.
+				Selects between <b>composed</b>` mode, which displays the original with
+				bboxes and segmentation masks overlay, and <b>mask</b> which displays
+				overlays only.
 				<br /> <br />
 				<h5>Speed button </h5>
 				Selects between 3 video play speeds.
@@ -133,7 +110,8 @@ export default class Readme extends React.Component {
 				Compared to a client-server architecture, the setup is lighter, the
 				device is independent, but lacking computation power, performance may
 				potentially be inferior. <br />
-				<h5>WebGL Acceleration</h5>
+				<br />
+				<h6>WebGL Acceleration</h6>
 				Being Tensorflow-JS based, the application automatically recognizes the
 				platform's backend, and can exploit webGL acceleration accordingly.
 				<br />

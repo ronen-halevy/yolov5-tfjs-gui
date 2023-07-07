@@ -9,27 +9,25 @@ export default class Readme extends React.Component {
 				<h2>Welcome to the YoloV5 Tfjs Demo!</h2>
 				<br /> <br />
 				<h3>TL-DR</h3>
-				The app is ready to go - clicking canvas starts execution with defaults.
-				<br />
-				<br />
-				<h3>Introduction</h3> <br />
 				This app classifies objects, marks them with bounding boxes and instance
-				segmentation colored masks. This implementation uses the{' '}
-				<i>Tensorflow-JS</i>
-				framework, and is based on <i>Ultralytics</i>{' '}
+				segmentation colored masks. Both videos and still images are supported.
+				The app is ready to go. Click canvas to start execution using default
+				setup.
+				<br />
+				<br />
+				<h3>Credits First</h3> <br />
+				Yolov5 implementation is based on <i>Ultralytics</i>{' '}
 				<a href='https://github.com/ultralytics/yolov5'>YoloV5 repository</a>
 				<br />
 				<br />
 				<h3>A brief on Yolo</h3>
-				Yolo is a CNN-based object detection algorithm. The acronym of <b>Y</b>
-				ou <b>O</b>nly <b>L</b>ook <b>O</b>nce, refers to the single pass
-				prediction process, as opposed to algorithms such as R-CNN, which uses
-				an extra pass for ROI search. A single pass results better speed, which
-				is essential for real time video with larger fps rate. <br /> <br />
+				Yolo is a CNN-based object detection algorithm. The acronym of{' '}
+				<i>You Only Look Once</i>, refers to the single pass prediction process,
+				as opposed to algorithms such as R-CNN, which uses an extra pass for ROI
+				search. A single pass results better speed, which is essential for real
+				time video with larger fps rate. <br /> <br />
 				<h3>The UI </h3>
-				The UI is implemented using <i>ReactJS</i> with <i>Bootstrap</i> for
-				styling. The interface consists 4 panel sections detailed next <br />{' '}
-				<br />
+				The interface consists 4 panel sections detailed next <br /> <br />
 				<h4>Panel Sections</h4>
 				<br />
 				<h4>1. Model Selection panel</h4>
@@ -65,14 +63,14 @@ export default class Readme extends React.Component {
 				thresholds, and missed detections for higher thresholds.
 				<br /> <br />
 				<h5>IouTHLD button </h5>
-				This button sets the threshold for Iou, an acronym for <b>I</b>
-				ntersection <b>O</b>ver
-				<b>U</b>nion. Iou measures the amount of overlap between adjacent
-				bounding boxes. The value range is between 0 and 1. Detections with
-				scores below thresholds are filtered out. The lower the IOU threshold
-				is, the less overlapping boxes are displayed. The tradeoff is between
-				missing detections of close objects for lower thresholds and receiving
-				false duplicated detections for higher thresholds.
+				This button sets the <i>Iou</i> threshold. <i>Iou</i>, an acronym for{' '}
+				<i>Intersection Over Union</i>, measures the amount of overlap between
+				adjacent bounding boxes. The threshold value ranges between 0 - no
+				overlap is permitted, and 1 - full overlap is permitted. In case of{' '}
+				<i>Iou</i> scores above threshold, the object with smaller detection
+				confidence is ignored. So, tradeoff is between missing detections of
+				close objects on lower thresholds, and false duplicated detections on
+				higher thresholds.
 				<br /> <br />
 				<h5>Max Boxes button </h5>
 				This button sets the max number of bounding boxes.
@@ -98,22 +96,27 @@ export default class Readme extends React.Component {
 				Scales canvas size.
 				<br /> <br />
 				<h4> Canvas </h4>
-				Both images and videos are rendered on the same canvas. Touching (or
-				clicking) the canvas surface triggers <b>play</b> and <b>stop</b> of
-				process.
+				Touching (or clicking) the canvas surface triggers <b>play</b> and{' '}
+				<b>stop</b> of process.
 				<br /> <br />
-				<h3>The algorithmic engine</h3>
-				The algorithmic engine is implemented using Tensorflow JS, the Java
-				Script variant of Tensorflow.
+				<h3>Implementation Notes</h3>
 				<br />
-				The algorithm runs solely on the browser. <br />
+				<h4>The UI</h4>
+				The UI is implemented using <i>ReactJS</i> with <i>Bootstrap</i> for
+				styling
+				<h3>The algorithmic engine</h3>
+				The algorithmic engine is implemented using <i>Tensorflow-JS</i>, the
+				Java Script variant of Tensorflow.
+				<br />. It's a serverless implementation, as the algorithm runs solely
+				on the browser. <br />
 				Compared to a client-server architecture, the setup is lighter, the
-				device is independent, but lacking computation power, performance may
-				potentially be inferior. <br />
+				device is independent, but lacking computation power, the performance
+				may be significantly inferior. <br />
 				<br />
 				<h6>WebGL Acceleration</h6>
-				Being Tensorflow-JS based, the application automatically recognizes the
-				platform's backend, and can exploit webGL acceleration accordingly.
+				<i>Tensorflow-JS</i> based, the application automatically recognizes the
+				platform's backend, and can exploit <i>webGL</i> acceleration
+				accordingly.
 				<br />
 				<br />
 				<br />

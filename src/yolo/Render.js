@@ -84,19 +84,20 @@ class Render {
 		imageHeight
 	) => {
 		const context = this.canvas.getContext('2d');
-		// set canvas size - only on a change, otherwise image flickers! ignore transient's 0s)
-		if ((imageWidth != this.canvas.width) & imageWidth) {
-			this.canvas.width = imageWidth;
-		}
-		if ((imageHeight != this.canvas.height) & imageHeight) {
-			this.canvas.height = imageHeight;
+		// set canvas size if changes, but ignore transient to 0:
+		if (
+			(imageWidth != this.canvas.width || imageHeight != this.canvas.height) &&
+			imageHeight &&
+			imageWidth
+		) {
+			[this.canvas.width, this.canvas.height] = [imageWidth, imageHeight];
 		}
 
 		// context.drawImage(image, 0, 0, imageWidth, imageHeight);
-		tf.engine().startScope();
-
 		let count1 = tf.memory().numTensors;
 		if ((imageHeight > 0) & (imageWidth > 0)) {
+			tf.engine().startScope();
+
 			const resImage = tf.browser.toPixels(
 				tf.image.resizeBilinear(segmentedImage, [imageHeight, imageWidth]),
 				this.canvas
@@ -113,11 +114,10 @@ class Render {
 					)
 				);
 			});
+			tf.engine().endScope();
 		}
-
-		tf.engine().endScope();
 		let count2 = tf.memory().numTensors;
-		console.log('numTensors ', count1);
+		console.log('numTensors ', count1, count2);
 	};
 }
 export { Render };

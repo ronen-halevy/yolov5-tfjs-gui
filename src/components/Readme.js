@@ -11,8 +11,7 @@ export default class Readme extends React.Component {
 				<h3>TL-DR</h3>
 				This app classifies objects, marks them with bounding boxes and instance
 				segmentation colored masks. Both videos and still images are supported.
-				The app is ready to go. Click canvas to start execution using default
-				setup.
+				Click canvas to start execution with default setup.
 				<br />
 				<br />
 				<h3>Credits First</h3> <br />

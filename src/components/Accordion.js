@@ -18,7 +18,7 @@ class Accordion extends React.Component {
 							aria-expanded='false'
 							aria-controls='panelsStayOpen-collapseOne'
 						>
-							<span class='border border-dark '>Readme</span>
+							<span className='border border-dark '>Readme</span>
 						</button>
 					</h2>
 					<div

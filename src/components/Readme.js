@@ -22,10 +22,11 @@ export default class Readme extends React.Component {
 				<br />
 				<h3>A brief on Yolo</h3>
 				Yolo is a CNN-based object detection algorithm. The acronym of{' '}
-				<i>You Only Look Once</i>, refers to the single pass prediction process,
-				as opposed to algorithms such as R-CNN, which uses an extra pass for ROI
-				search. A single pass results better speed, which is essential for real
-				time video with larger fps rate. <br /> <br />
+				<i>You Only Look Once</i>, indicates a single prediction pass process,
+				as opposed to other algorithms (such as R-CNN), which require an
+				additional pass for ROI search. A single pass results in better
+				performance in terms of speed, essential for higher fps real time video
+				detection process. <br /> <br />
 				<h3>The UI </h3>
 				The interface consists 4 panel sections detailed next <br /> <br />
 				<h4>Panel Sections</h4>
@@ -104,6 +105,8 @@ export default class Readme extends React.Component {
 				<h4>The UI</h4>
 				The UI is implemented using <i>ReactJS</i> with <i>Bootstrap</i> for
 				styling
+				<br />
+				<br />
 				<h3>The algorithmic engine</h3>
 				The algorithmic engine is implemented using <i>Tensorflow-JS</i>, the
 				Java Script variant of Tensorflow.

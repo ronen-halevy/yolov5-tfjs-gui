@@ -53,8 +53,8 @@ export default class Readme extends React.Component {
 				<br />
 				<h4>3. Configuration Panel</h4>
 				<br />
-				The panel consists of 3 configuration buttons. The buttons&rsquo; effect
-				immediately while a video is playing.
+				The panel consists of 3 configuration buttons. The buttons are
+				interactive.
 				<br /> <br />
 				<h5>ScoreTHLD button </h5>
 				This button sets the threshold for the detection confidence score. The

@@ -27,7 +27,7 @@ export default class Readme extends React.Component {
 				performance in terms of speed, essential for higher fps real time video
 				detection process. <br /> <br />
 				<h3>The UI </h3>
-				The interface consists 4 panel sections detailed next <br /> <br />
+				The interface consists 4 panel sections detailed next. <br /> <br />
 				<h4>Panel Sections</h4>
 				<br />
 				<h4>1. Model Selection panel</h4>
@@ -54,7 +54,7 @@ export default class Readme extends React.Component {
 				<h4>3. Configuration Panel</h4>
 				<br />
 				The panel consists of 3 configuration buttons. The buttons&rsquo; effect
-				is immediate, even while a video play.
+				immediately while a video is playing.
 				<br /> <br />
 				<h5>ScoreTHLD button </h5>
 				This button sets the threshold for the detection confidence score. The
